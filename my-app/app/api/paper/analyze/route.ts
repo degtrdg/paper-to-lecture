@@ -14,8 +14,6 @@ function corsHandler(request: NextRequest, response: NextResponse) {
   return response
 }
 
-
-
 const vidSchema = z.object({
   links: z.array(z.string()),
 });
