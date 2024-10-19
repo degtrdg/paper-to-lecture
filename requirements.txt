@@ -1,0 +1,4 @@
+Pillow
+markdown
+requests
+beautifulsoup4
