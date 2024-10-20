@@ -22,6 +22,7 @@ interface Example {
   videoLength: string;
   views: string;
   paperPreview: string;
+  videoThumbnail: string;
 }
 
 const LandingPage: NextPage = () => {
@@ -43,10 +44,38 @@ const LandingPage: NextPage = () => {
   ]
 
   const examples: Example[] = [
-    { title: "Quantum Computing Breakthroughs", journal: "Nature Physics", videoLength: "15:23", views: "12.5K", paperPreview: "/placeholder.svg?height=100&width=77" },
-    { title: "Advancements in CRISPR Technology", journal: "Cell", videoLength: "18:47", views: "9.8K", paperPreview: "/placeholder.svg?height=100&width=77" },
-    { title: "Dark Matter Detection Methods", journal: "Astrophysical Journal", videoLength: "20:11", views: "7.2K", paperPreview: "/placeholder.svg?height=100&width=77" },
-    { title: "Neural Networks in Climate Modeling", journal: "Science", videoLength: "16:39", views: "11.3K", paperPreview: "/placeholder.svg?height=100&width=77" }
+    { 
+      title: "Quantum Computing Breakthroughs", 
+      journal: "Nature Physics", 
+      videoLength: "15:23", 
+      views: "12.5K", 
+      paperPreview: "https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41567-023-02214-0/MediaObjects/41567_2023_2214_Fig1_HTML.png",
+      videoThumbnail: "https://img.youtube.com/vi/JhHMJCUmq28/0.jpg"
+    },
+    { 
+      title: "Advancements in CRISPR Technology", 
+      journal: "Cell", 
+      videoLength: "18:47", 
+      views: "9.8K", 
+      paperPreview: "https://ars.els-cdn.com/content/image/1-s2.0-S0092867422015725-gr1.jpg",
+      videoThumbnail: "https://img.youtube.com/vi/4YKFw2KZA5o/0.jpg"
+    },
+    { 
+      title: "Dark Matter Detection Methods", 
+      journal: "Astrophysical Journal", 
+      videoLength: "20:11", 
+      views: "7.2K", 
+      paperPreview: "https://iopscience.iop.org/article/10.3847/1538-4357/ac4973/meta/assets/images/large/apjac4973f1_hr.jpg",
+      videoThumbnail: "https://img.youtube.com/vi/QAa2O_8wBUQ/0.jpg"
+    },
+    { 
+      title: "Neural Networks in Climate Modeling", 
+      journal: "Science", 
+      videoLength: "16:39", 
+      views: "11.3K", 
+      paperPreview: "https://www.science.org/cms/10.1126/science.abi9167/asset/3bfb0eb7-54f4-4c4f-b4c9-63f7c2d1d3fb/assets/graphic/373_1503_f3.jpeg",
+      videoThumbnail: "https://img.youtube.com/vi/Ck3FuTzZvhI/0.jpg"
+    }
   ]
 
   return (
@@ -142,7 +171,7 @@ const LandingPage: NextPage = () => {
                             alt={`Preview of ${example.title}`}
                             width={77}
                             height={100}
-                            className="rounded shadow-md"
+                            className="rounded shadow-md object-cover"
                           />
                         </Link>
                         <div>
@@ -160,8 +189,15 @@ const LandingPage: NextPage = () => {
                     </div>
                     <div className="md:w-1/3 bg-primary/5 flex items-center justify-center p-6">
                       <div className="relative w-full aspect-video bg-muted rounded-lg overflow-hidden">
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Video className="w-16 h-16 text-primary/50" />
+                        <Image
+                          src={example.videoThumbnail}
+                          alt={`Video thumbnail for ${example.title}`}
+                          layout="fill"
+                          objectFit="cover"
+                          className="rounded-lg"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                          <Video className="w-16 h-16 text-white" />
                         </div>
                         <div className="absolute bottom-2 right-2 bg-background/80 p-2 rounded-full">
                           <Lock className="w-4 h-4 text-primary" />

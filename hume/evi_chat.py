@@ -89,7 +89,6 @@ async def main():
 
         try:
             while True:
-                # Start the MicrophoneInterface to capture and send audio
                 microphone_task = asyncio.create_task(MicrophoneInterface.start(
                     socket,
                     byte_stream=websocket_interface.byte_strs,
