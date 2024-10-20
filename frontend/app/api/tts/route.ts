@@ -23,8 +23,8 @@ export async function POST(request: NextRequest) {
                     id: "a0e99841-438c-4a64-b679-ae501e7d6091", 
                 },
                 output_format: {
-                    container: "wav",
-                    encoding: "pcm_f32le",
+                    container: "mp3",
+                    encoding: "mp3",
                     sample_rate: 44100,
                 },
             }),
@@ -41,8 +41,8 @@ export async function POST(request: NextRequest) {
 
         return new NextResponse(buffer, {
             headers: {
-                'Content-Type': 'audio/wav',
-                'Content-Disposition': 'attachment; filename="audio.wav"',
+                'Content-Type': 'audio/mpeg',
+                'Content-Disposition': 'attachment; filename="audio.mp3"',
             },
         });
     } catch (error) {
