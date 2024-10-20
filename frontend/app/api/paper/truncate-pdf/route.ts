@@ -53,7 +53,7 @@ async function extractPageBuffer(pdfDoc: PDFDocument, pageIndex: number): Promis
 }
 
 async function checkForReferences(pageBuffer: Uint8Array): Promise<boolean> {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   
   const result = await model.generateContent([
     "Is this page a reference page? (one of the pages in the PDF that soley contains references) Answer with just 'yes' or 'no'.",

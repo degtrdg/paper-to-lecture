@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 import base64
 import os
 import PyPDF2
+import uvicorn
 
 app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json")
 
@@ -21,11 +22,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class SlideRequest(BaseModel):
     title: str
     content: str
     image_url: Optional[str] = None
     image_subtitle: Optional[str] = None
+
 
 @app.post("/api/create_slide")
 async def create_slide_endpoint(slide_request: SlideRequest):
@@ -46,35 +49,39 @@ async def create_slide_endpoint(slide_request: SlideRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.post("/api/extract_pdf_text")
 async def extract_pdf_text(pdf_file: UploadFile = File(...)):
     try:
         # Read the uploaded PDF file
         pdf_content = await pdf_file.read()
-        
+
         # Create a PDF reader object
         pdf_reader = PyPDF2.PdfReader(BytesIO(pdf_content))
-        
+
         # Initialize an empty string to store all the text
         all_text = ""
-        
+
         # Iterate through all pages and extract text
         for page in pdf_reader.pages:
             all_text += page.extract_text()
-        
+
         # Prepare the response
         response = {
             "total_pages": len(pdf_reader.pages),
             "total_characters": len(all_text),
             "extracted_text": all_text,
-            "full_text": all_text
+            "full_text": all_text,
         }
-        
+
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-def create_slide(title, content, image_url=None, image_subtitle=None, width=1920, height=1080):
+
+def create_slide(
+    title, content, image_url=None, image_subtitle=None, width=1920, height=1080
+):
     # Create a blank white image
     slide = Image.new("RGB", (width, height), color="white")
     draw = ImageDraw.Draw(slide)
@@ -135,6 +142,7 @@ def create_slide(title, content, image_url=None, image_subtitle=None, width=1920
 
     return slide
 
+
 def wrap_text(text, font, max_width):
     words = text.split()
     lines = []
@@ -149,3 +157,7 @@ def wrap_text(text, font, max_width):
 
     lines.append(current_line)
     return lines
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
