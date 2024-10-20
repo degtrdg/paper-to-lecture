@@ -102,7 +102,7 @@ export async function testProcessJob(enableTest: boolean = false) {
 }
 
 // Modify your existing processJob function to include the test
-export async function processJob(user_id: string, pdfUrl: string, isTest: boolean = true) {
+export async function processJob(user_id: string, pdfUrl: string, isTest: boolean = false) {
     if (isTest) {
         return await testProcessJob(true);
     }

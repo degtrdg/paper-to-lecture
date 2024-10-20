@@ -73,7 +73,7 @@ async def extract_pdf_text(request: PDFBase64Request):
         pdf_content = base64.b64decode(request.pdf_base64)
 
         # Create a PDF reader object
-        pdf_file = io.BytesIO(pdf_content)
+        pdf_file = BytesIO(pdf_content)
 
         try:
             pdf_reader = PyPDF2.PdfReader(pdf_file, strict=False)
