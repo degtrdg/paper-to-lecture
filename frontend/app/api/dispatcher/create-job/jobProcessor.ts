@@ -260,7 +260,7 @@ export async function processJob(user_id: string, pdfUrl: string, isTest: boolea
         const { data, error } = await supabase
             .from('videos')
             .insert({
-                uuid: video_id,
+                id: video_id,
                 video_link: createVideoResponse.video_url,
                 creator_id: user_id
             });

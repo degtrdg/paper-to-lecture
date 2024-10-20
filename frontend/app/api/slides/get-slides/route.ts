@@ -98,7 +98,7 @@ We need to have the slides in where it says what will be on the slides but also 
 
 That means having the title and the slide's content in markdown format (with # headers, bullet points, and newlines for spacing). The title slide will only have the title of the paper as content. In terms of what you'd say in the speaker notes, you'll give context on the paper and the authors along with your elevator pitch for the paper basically. The order of each slide will be the content of the slide and then the speaker notes. All the information about the each slide will be in a single md codeblock. So if there are n slides, there will be n codeblocks which I can easily extract with regex by splitting your entire output by \`---\`.
 
-The presentation notes need to have detailed things that I would say for each of those notes. This needs to be fully encompassing so that I can present it straight from what you give me. We will not be introducing ourselves by name since we are already known. It is very important that you do not hallucinate or make up things in the presentation as this is about a research paper.`;
+The presentation notes need to have detailed things that I would say for each of those notes. This needs to be fully encompassing so that I can present it straight from what you give me. We will not be introducing ourselves by name since we are already known. It is very important that you do not hallucinate or make up things in the presentation as this is about a research paper. Keep the slide count to 10 slides max. DO NOT EXCEED 10 SLIDES.`;
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,

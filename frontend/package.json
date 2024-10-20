@@ -23,6 +23,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^11.11.9",
     "geist": "^1.2.1",
+    "hume": "^0.9.1",
     "lucide-react": "^0.436.0",
     "next": "latest",
     "next-themes": "^0.3.0",
