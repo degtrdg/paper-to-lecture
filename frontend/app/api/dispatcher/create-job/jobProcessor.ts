@@ -6,7 +6,7 @@ export async function processJob(user_id: string, pdfUrl: string) {
     try {
         
         // First, lets call the info truncator
-        /*const infoTruncatorResult = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/paper/truncate-pdf`, {
+        const infoTruncatorResult = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/paper/truncate-pdf`, {
             method: 'POST',
             body: JSON.stringify({ pdfUrl: pdfUrl }),
         });
@@ -15,25 +15,24 @@ export async function processJob(user_id: string, pdfUrl: string) {
         await supabase
         .from('jobs')
         .update({ status: 2 }) 
-        .eq('user_id', user_id);*/
-
+        .eq('user_id', user_id);    
         // Then, lets call the paper text extractor
-        /*const paperTextExtractorResult = await fetch('/api/paper/extract-info', {
+        const paperTextExtractorResult = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/extract_pdf_text`, {
             method: 'POST',
-            body: JSON.stringify({ pdfBytes, user: user_id }),
+            body: JSON.stringify({ pdf_file: pdfBytes }),
         });
-        const paperTextExtractorResponse = await paperTextExtractorResult.json();*/
+        const paperTextExtractorResponse = await paperTextExtractorResult.json();
         await supabase
         .from('jobs')
         .update({ status: 3 })
         .eq('user_id', user_id);
         // The text extractor is not set up yet, so let's create some dummy data, about 5 paragraphs of text poorly formatted with words in wrong places
-        const paperText = "This is a test paper, it has some words in wrong places and is not formatted well. It also has some references that should be removed. But everything that is related to the main content of the paper should be kept no matter what. Return a version of the text in a linear form that is readable inside a browser. It should be a single string with no line breaks. It should be about 5 paragraphs of text. It should be about 1000 words.";
-
+        //const paperText = "This is a test paper, it has some words in wrong places and is not formatted well. It also has some references that should be removed. But everything that is related to the main content of the paper should be kept no matter what. Return a version of the text in a linear form that is readable inside a browser. It should be a single string with no line breaks. It should be about 5 paragraphs of text. It should be about 1000 words.";
+        console.log("Paper text extractor response:", paperTextExtractorResponse);
         // Then, call the truncate text api
         const truncateTextResult = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/paper/truncate-text`, {
             method: 'POST',
-            body: JSON.stringify({ rawPaper: paperText }),
+            body: JSON.stringify({ rawPaper: paperTextExtractorResponse['full_text'] }),
         });
         const truncateTextResponse = await truncateTextResult.json();
         console.log("Truncated paper:", truncateTextResponse);
