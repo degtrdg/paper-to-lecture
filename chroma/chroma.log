@@ -1,0 +1,63 @@
+[32mINFO[0m:     [19-10-2024 10:56:29] Set chroma_server_nofile to 65535
+[32mINFO[0m:     [19-10-2024 10:56:29] Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+[36mDEBUG[0m:    [19-10-2024 10:56:29] Starting component System
+[36mDEBUG[0m:    [19-10-2024 10:56:29] Starting component OpenTelemetryClient
+[36mDEBUG[0m:    [19-10-2024 10:56:29] Starting component SqliteDB
+[36mDEBUG[0m:    [19-10-2024 10:56:29] Starting component QuotaEnforcer
+[36mDEBUG[0m:    [19-10-2024 10:56:29] Starting component Posthog
+[36mDEBUG[0m:    [19-10-2024 10:56:29] Starting component SimpleRateLimitEnforcer
+[36mDEBUG[0m:    [19-10-2024 10:56:29] Starting component LocalSegmentManager
+[36mDEBUG[0m:    [19-10-2024 10:56:29] Starting component LocalExecutor
+[36mDEBUG[0m:    [19-10-2024 10:56:29] Starting component SegmentAPI
+[32mINFO[0m:     [19-10-2024 10:56:29] Started server process [[36m10799[0m]
+[32mINFO[0m:     [19-10-2024 10:56:29] Waiting for application startup.
+[32mINFO[0m:     [19-10-2024 10:56:29] Application startup complete.
+[32mINFO[0m:     [19-10-2024 10:56:29] Uvicorn running on [1mhttp://localhost:8000[0m (Press CTRL+C to quit)
+[32mINFO[0m:     [19-10-2024 10:56:35] ::1:55673 - "POST /query HTTP/1.1" 404
+[32mINFO[0m:     [19-10-2024 10:57:43] 127.0.0.1:55676 - "POST /query HTTP/1.1" 404
+[32mINFO[0m:     [19-10-2024 10:58:07] 127.0.0.1:55681 - "GET / HTTP/1.1" 404
+[32mINFO[0m:     [19-10-2024 10:58:07] 127.0.0.1:55681 - "GET /favicon.ico HTTP/1.1" 404
+[32mINFO[0m:     [19-10-2024 10:58:53] ::1:55703 - "POST /query HTTP/1.1" 404
+[32mINFO[0m:     [19-10-2024 10:58:59] ::1:55704 - "POST /query HTTP/1.1" 404
+[32mINFO[0m:     [19-10-2024 10:59:13] ::1:55705 - "POST /query HTTP/1.1" 404
+[32mINFO[0m:     [19-10-2024 11:00:30] ::1:55723 - "POST /api/v1/collections/sample_collection/query HTTP/1.1" 422
+[32mINFO[0m:     [19-10-2024 14:25:00] Shutting down
+[32mINFO[0m:     [19-10-2024 14:25:00] Finished server process [[36m10799[0m]
+[36mDEBUG[0m:    [19-10-2024 14:25:00] Stopping component System
+[36mDEBUG[0m:    [19-10-2024 14:25:00] Stopping component SegmentAPI
+[36mDEBUG[0m:    [19-10-2024 14:25:00] Stopping component LocalExecutor
+[36mDEBUG[0m:    [19-10-2024 14:25:00] Stopping component LocalSegmentManager
+[36mDEBUG[0m:    [19-10-2024 14:25:00] Stopping component SimpleRateLimitEnforcer
+[36mDEBUG[0m:    [19-10-2024 14:25:00] Stopping component Posthog
+[36mDEBUG[0m:    [19-10-2024 14:25:00] Stopping component QuotaEnforcer
+[36mDEBUG[0m:    [19-10-2024 14:25:00] Stopping component SqliteDB
+[36mDEBUG[0m:    [19-10-2024 14:25:00] Stopping component OpenTelemetryClient
+[31mERROR[0m:    [19-10-2024 14:25:00] Traceback (most recent call last):
+  File "/Users/nicolashuang/.pyenv/versions/3.10.14/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "uvloop/loop.pyx", line 1512, in uvloop.loop.Loop.run_until_complete
+  File "uvloop/loop.pyx", line 1505, in uvloop.loop.Loop.run_until_complete
+  File "uvloop/loop.pyx", line 1379, in uvloop.loop.Loop.run_forever
+  File "uvloop/loop.pyx", line 557, in uvloop.loop.Loop._run
+  File "uvloop/loop.pyx", line 476, in uvloop.loop.Loop._on_idle
+  File "uvloop/cbhandles.pyx", line 83, in uvloop.loop.Handle._run
+  File "uvloop/cbhandles.pyx", line 63, in uvloop.loop.Handle._run
+  File "/Users/nicolashuang/Desktop/paper-to-lecture/experiments/.venv/lib/python3.10/site-packages/uvicorn/server.py", line 68, in serve
+    with self.capture_signals():
+  File "/Users/nicolashuang/.pyenv/versions/3.10.14/lib/python3.10/contextlib.py", line 142, in __exit__
+    next(self.gen)
+  File "/Users/nicolashuang/Desktop/paper-to-lecture/experiments/.venv/lib/python3.10/site-packages/uvicorn/server.py", line 332, in capture_signals
+    signal.raise_signal(captured_signal)
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/nicolashuang/Desktop/paper-to-lecture/experiments/.venv/lib/python3.10/site-packages/starlette/routing.py", line 700, in lifespan
+    await receive()
+  File "/Users/nicolashuang/Desktop/paper-to-lecture/experiments/.venv/lib/python3.10/site-packages/uvicorn/lifespan/on.py", line 137, in receive
+    return await self.receive_queue.get()
+  File "/Users/nicolashuang/.pyenv/versions/3.10.14/lib/python3.10/asyncio/queues.py", line 159, in get
+    await getter
+asyncio.exceptions.CancelledError
+

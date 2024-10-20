@@ -1,0 +1,55 @@
+[tool.poetry]
+name = "marker-pdf"
+version = "0.3.1"
+description = "Convert PDF to markdown with high speed and accuracy."
+authors = ["Vik Paruchuri <github@vikas.sh>"]
+readme = "README.md"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/VikParuchuri/marker"
+keywords = ["pdf", "markdown", "ocr", "nlp"]
+packages = [
+    {include = "marker"}
+]
+include = [
+    "convert.py",
+    "convert_single.py",
+    "chunk_convert.sh",
+    "chunk_convert.py",
+    "marker_app.py",
+    "run_marker_app.py"
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Pillow = "^10.1.0"
+pydantic = "^2.4.2"
+pydantic-settings = "^2.0.3"
+transformers = "^4.45.2"
+python-dotenv = "^1.0.0"
+torch = "^2.4.1"
+tqdm = "^4.66.1"
+tabulate = "^0.9.0"
+ftfy = "^6.1.1"
+texify = "^0.2.0"
+rapidfuzz = "^3.8.1"
+surya-ocr = "^0.6.6"
+filetype = "^1.2.0"
+regex = "^2024.4.28"
+pdftext = "^0.3.17"
+tabled-pdf = "^0.1.1"
+modal = "^0.64.199"
+
+[tool.poetry.group.dev.dependencies]
+jupyter = "^1.0.0"
+datasets = "^2.21.0"
+streamlit = "^1.37.1"
+
+[tool.poetry.scripts]
+marker = "convert:main"
+marker_single = "convert_single:main"
+marker_chunk_convert = "chunk_convert:main"
+marker_gui = "run_marker_app:run_app"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
