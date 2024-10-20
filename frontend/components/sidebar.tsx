@@ -11,7 +11,7 @@ export default function Sidebar() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const pathname = usePathname();
   return (
-    pathname === '/home' || pathname === '/videos' ? (
+    pathname === '/home' || pathname === '/videos' || pathname === '/videos/viewer' ? (
     <motion.div
       className="bg-muted"
       initial={{ width: sidebarOpen ? 250 : 60 }}
