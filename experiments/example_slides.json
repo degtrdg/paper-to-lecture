@@ -1,381 +1,254 @@
 [
-    {
-      title: "Deciphering Cancer Stemness in Tumors: A Novel Stemness Index for Oncogenic Dedifferentiation",
-      markdownContent: "## Speaker Notes:\n" +
-        "\n" +
-        `Welcome everyone. Today, I'll be presenting a summary and discussion of a significant research paper titled "Deciphering Cancer Stemness in Tumors: A Novel Stemness Index for Oncogenic Dedifferentiation." This study was conducted by researchers who aimed to understand the role of stemness in cancer progression by developing new stemness indices. The findings have important implications for cancer biology and potential therapeutic approaches.`,
-      speakerNotes: `Welcome everyone. Today, I'll be presenting a summary and discussion of a significant research paper titled "Deciphering Cancer Stemness in Tumors: A Novel Stemness Index for Oncogenic Dedifferentiation." This study was conducted by researchers who aimed to understand the role of stemness in cancer progression by developing new stemness indices. The findings have important implications for cancer biology and potential therapeutic approaches.`,
-      _meta: {
-        usage: {
-          prompt_tokens: 218,
-          completion_tokens: 202,
-          total_tokens: 420,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "Introduction and Background",
-      markdownContent: "- **Cancer progression** involves loss of differentiation and gain of stem-cell-like features.\n" +
-        "- **Stemness** refers to a cell's ability for self-renewal and differentiation.\n" +
-        "- Dedifferentiated tumors are often more aggressive and resistant to therapy.\n" +
-        "- The tumor microenvironment influences cancer stemness through hypoxia, cytokines, and other factors.",
-      speakerNotes: "To begin, it's important to understand the concept of stemness in the context of cancer. Stemness is the property of a cell that allows it to self-renew and differentiate into various cell types. During cancer progression, cells often lose their differentiated features and acquire stem-cell-like characteristics, leading to more aggressive and treatment-resistant tumors. The tumor microenvironment plays a crucial role in this process by providing signals that can promote or inhibit stemness.",
-      _meta: {
-        usage: {
-          prompt_tokens: 276,
-          completion_tokens: 176,
-          total_tokens: 452,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "Central Question",
-      markdownContent: "## Objective\n" +
-        "Develop novel stemness indices to quantify oncogenic dedifferentiation.\n" +
-        "\n" +
-        "## Hypothesis\n" +
-        "Stemness indices derived from molecular profiles can reveal mechanisms of cancer dedifferentiation.\n" +
-        "\n" +
-        "## Goals\n" +
-        "- Create transcriptomic and epigenetic stemness indices.\n" +
-        "- Analyze associations with oncogenic pathways, mutations, and the tumor microenvironment.\n" +
-        "- Identify potential therapeutic targets and compounds.",
-      speakerNotes: "The central question addressed by this paper is whether novel stemness indices can be used to quantify the degree of dedifferentiation in tumors and uncover underlying biological mechanisms. The researchers hypothesized that these indices, based on gene expression and DNA methylation data, could provide insights into cancer stemness and its associations with various molecular and clinical features.",
-      _meta: {
-        usage: {
-          prompt_tokens: 270,
-          completion_tokens: 164,
-          total_tokens: 434,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "Methods Overview",
-      markdownContent: "## Methods Overview\n" +
-        "\n" +
-        "### Data Sources:\n" +
-        "- Non-tumor pluripotent stem cells and differentiated progeny profiles.\n" +
-        "- The Cancer Genome Atlas (TCGA) datasets (12,000 samples, 33 tumor types).\n" +
-        "\n" +
-        "### Stemness Indices Development:\n" +
-        "- Used **One-Class Logistic Regression (OCLR)** machine-learning algorithm.\n" +
-        "- Derived two indices:\n" +
-        "  - **mRNAsi**: mRNA expression-based stemness index.\n" +
-        "  - **mDNAsi**: DNA methylation-based stemness index.\n" +
-        "\n" +
-        "### Validation:\n" +
-        "- Applied indices to external datasets and TCGA samples.\n" +
-        "- Correlated indices with known stemness features and clinical data.",
-      speakerNotes: "The researchers utilized publicly available datasets, including profiles from stem cells and their differentiated progeny, as well as extensive data from TCGA. They developed two stemness indices using the OCLR algorithm—one based on mRNA expression (mRNAsi) and the other on DNA methylation (mDNAsi). These indices range from zero (low stemness) to one (high stemness). The indices were validated using external datasets and were applied to TCGA samples to explore associations with various molecular and clinical features.",
-      _meta: {
-        usage: {
-          prompt_tokens: 360,
-          completion_tokens: 262,
-          total_tokens: 622,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "mRNA Expression-Based Stemness Index (mRNAsi)",
-      markdownContent: "## Validation:\n" +
-        "- Higher mRNAsi in stem cells compared to differentiated cells.\n" +
-        "- Stratified tumors by known stemness-related features.\n" +
-        "\n" +
-        "## Findings:\n" +
-        "- High mRNAsi in germ-cell tumors, basal breast cancer, and lympho-hematopoietic cancers.\n" +
-        "- Enrichment of stemness gene sets and cancer hallmarks.\n" +
-        "- Positive correlation with core stem cell factors (MYC, OCT4, SOX2).\n" +
-        "- Negative correlation with epithelial-mesenchymal transition (EMT) markers.",
-      speakerNotes: "The mRNA-based stemness index (mRNAsi) effectively distinguished stem cells from differentiated cells. In tumors, higher mRNAsi values were observed in types known for their dedifferentiated phenotypes, such as germ-cell tumors and basal breast cancer. The index correlated positively with known stemness genes like MYC, OCT4, and SOX2, and negatively with EMT markers. This suggests that tumors with high mRNAsi maintain stem-cell-like characteristics and an epithelial phenotype.",
-      _meta: {
-        usage: {
-          prompt_tokens: 336,
-          completion_tokens: 231,
-          total_tokens: 567,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "DNA Methylation-Based Stemness Index (mDNAsi)",
-      markdownContent: "## Development\n" +
-        "- Focused on hypomethylated stemness-specific enhancer regions.\n" +
-        "- Identified 219 CpG probes associated with stemness.\n" +
-        "\n" +
-        "## Findings\n" +
-        "- Higher mDNAsi in stem cells compared to differentiated cells.\n" +
-        "- Tumor samples showed varying degrees of stemness.\n" +
-        "- High mDNAsi associated with hypomethylation at key pluripotency enhancers (e.g., SOX2-OCT4 motifs).",
-      speakerNotes: "The DNA methylation-based stemness index (mDNAsi) was developed by focusing on hypomethylated enhancer regions specific to stem cells. The index effectively differentiated stem cells from their differentiated counterparts. In tumors, high mDNAsi values were associated with hypomethylation at enhancers critical for maintaining pluripotency, such as those bound by SOX2 and OCT4. This indicates that DNA methylation patterns play a significant role in regulating cancer stemness.",
-      _meta: {
-        usage: {
-          prompt_tokens: 322,
-          completion_tokens: 216,
-          total_tokens: 538,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "Correlation Between mRNAsi and mDNAsi",
-      markdownContent: "- **General Correlation**:\n" +
-        "  - Positive correlation for most tumor types.\n" +
-        "- **Exceptions**:\n" +
-        "  - Negative correlation in lower-grade glioma (LGG), thyroid carcinoma (THCA), thymoma (THYM).\n" +
-        "- **Possible Explanation**:\n" +
-        "  - IDH1/2 mutations in gliomas leading to hypermethylation (G-CIMP phenotype).\n" +
-        "  - mDNAsi reflects epigenetic changes not captured by mRNAsi.",
-      speakerNotes: "While mRNAsi and mDNAsi generally showed positive correlation across various tumor types, exceptions were found in gliomas and certain other cancers. In gliomas, IDH1/2 mutations cause widespread DNA hypermethylation, leading to lower mDNAsi despite high stemness indicated by mRNAsi. This suggests that mRNAsi and mDNAsi capture different aspects of cancer stemness, and both indices are valuable for a comprehensive understanding.",
-      _meta: {
-        usage: {
-          prompt_tokens: 311,
-          completion_tokens: 213,
-          total_tokens: 524,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "Stemness and Tumor Stratification",
-      markdownContent: "- **Breast Cancer (BRCA)**:\n" +
-        "  - High mRNAsi in basal subtype (aggressive, undifferentiated).\n" +
-        "  - Correlation with ER-negative status and TP53 mutations.\n" +
-        "- **Acute Myeloid Leukemia (AML)**:\n" +
-        "  - High mRNAsi in less differentiated FAB subtypes (M0-M2).\n" +
-        "  - Low mRNAsi in more differentiated M3 subtype.\n" +
-        "- **Gliomas**:\n" +
-        "  - High mDNAsi associated with high-grade glioblastomas (GBMs).\n" +
-        "  - Correlation with aggressive molecular subtypes and poor prognosis.",
-      speakerNotes: "Applying the stemness indices to specific cancers demonstrated their ability to stratify tumors based on dedifferentiation. In breast cancer, high mRNAsi was associated with the basal subtype, known for its aggressiveness and poor prognosis. In AML, the index correlated well with the degree of myeloid differentiation. In gliomas, high mDNAsi was linked to high-grade tumors and adverse clinical outcomes.",
-      _meta: {
-        usage: {
-          prompt_tokens: 325,
-          completion_tokens: 230,
-          total_tokens: 555,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "Pan-Cancer Stemness Landscape",
-      markdownContent: "## Associations with Mutations:\n" +
-        "- High mDNAsi linked to mutations in NSD1 (HNSC) and SETD2 (LUAD).\n" +
-        "\n" +
-        "## MicroRNA and Protein Expression:\n" +
-        "- Correlation with miR-200 family, FOXM1, CYCLINB1.\n" +
-        "\n" +
-        "## Clinical Features:\n" +
-        "- High stemness indices associated with higher tumor grades and poor prognosis in several cancers.\n" +
-        "\n" +
-        "## Immune Microenvironment:\n" +
-        "- High stemness indices often associated with lower immune cell infiltration and PD-L1 expression.",
-      speakerNotes: "Across various cancers, the stemness indices revealed associations with key mutations, microRNA, and protein expression levels. For example, mutations in genes regulating epigenetics were linked to higher stemness, suggesting a role in dedifferentiation. High stemness was often correlated with higher tumor grades and worse clinical outcomes. Additionally, tumors with high stemness indices tended to have lower immune cell infiltration and PD-L1 expression, which may impact responses to immunotherapy.",
-      _meta: {
-        usage: {
-          prompt_tokens: 329,
-          completion_tokens: 223,
-          total_tokens: 552,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "Stemness in Metastases and Tumor Heterogeneity",
-      markdownContent: "## Metastatic Tumors:\n" +
-        "- Generally higher mRNAsi compared to primary tumors.\n" +
-        "- Indicates increased dedifferentiation in metastasis.\n" +
-        "\n" +
-        "## Intratumor Heterogeneity:\n" +
-        "- Single-cell analyses showed variation in stemness within tumors.\n" +
-        "- Greater heterogeneity observed in gliomas compared to breast cancers.\n" +
-        "\n" +
-        "## Clinical Implications:\n" +
-        "- High stemness may contribute to therapy resistance and recurrence.",
-      speakerNotes: "When comparing primary tumors to metastases, metastatic samples typically exhibited higher stemness indices, suggesting that dedifferentiation plays a role in tumor spread. Single-cell analyses revealed significant intratumor heterogeneity in stemness, particularly in gliomas. This heterogeneity may contribute to challenges in treatment, as subpopulations of cancer stem cells can drive resistance and recurrence.",
-      _meta: {
-        usage: {
-          prompt_tokens: 289,
-          completion_tokens: 184,
-          total_tokens: 473,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "Stemness and the Immune Response",
-      markdownContent: "## Key Findings\n" +
-        "\n" +
-        "- **Negative Correlation**:\n" +
-        "  - High stemness indices associated with lower leukocyte fractions.\n" +
-        "  - Lower PD-L1 expression in tumors with high stemness.\n" +
-        "- **Immune Cell Populations**:\n" +
-        "  - Decreased infiltration of CD8+ T cells and activated immune cells.\n" +
-        "- **Implications for Immunotherapy**:\n" +
-        "  - Tumors with high stemness may be less responsive to checkpoint inhibitors.\n" +
-        "  - Potential need for combination therapies targeting both stemness and immune evasion.",
-      speakerNotes: "The study found that tumors with high stemness indices often have fewer immune cells infiltrating the tumor microenvironment and lower expression of PD-L1. This suggests that these tumors might evade immune detection and could be less responsive to immunotherapies that rely on activating immune cells. Understanding the relationship between stemness and the immune response is crucial for developing effective treatment strategies.",
-      _meta: {
-        usage: {
-          prompt_tokens: 293,
-          completion_tokens: 202,
-          total_tokens: 495,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "Identification of Potential Therapeutic Compounds",
-      markdownContent: "## Connectivity Map (CMap) Analysis:\n" +
-        "- Identified compounds that could target stemness-related pathways.\n" +
-        "\n" +
-        "## Key Compounds:\n" +
-        "- Dopamine receptor antagonists (thioridazine, prochlorperazine).\n" +
-        "- Wnt signaling inhibitor (pyrvinium).\n" +
-        "- HSP90 inhibitor (tanespimycin).\n" +
-        "- Protein synthesis inhibitor (puromycin).\n" +
-        "\n" +
-        "## Mechanisms of Action:\n" +
-        "- Many compounds shared mechanisms targeting stemness pathways.\n" +
-        "\n" +
-        "## Clinical Relevance:\n" +
-        "- Potential for repurposing existing drugs to target cancer stemness.",
-      speakerNotes: "By using CMap analysis, the researchers identified several compounds that may inhibit cancer stemness. Notably, some of these compounds are already used clinically for other indications, such as dopamine receptor antagonists. This opens the possibility of repurposing existing drugs to target cancer stem cells, potentially improving therapeutic outcomes. The shared mechanisms of action among these compounds highlight key pathways that could be targeted in anti-stemness therapies.",
-      _meta: {
-        usage: {
-          prompt_tokens: 327,
-          completion_tokens: 222,
-          total_tokens: 549,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "Summary and Conclusions",
-      markdownContent: "- **Novel Stemness Indices**:\n" +
-        "  - Developed mRNAsi and mDNAsi to quantify cancer stemness.\n" +
-        "- **Key Findings**:\n" +
-        "  - Stemness indices correlate with tumor dedifferentiation, aggressiveness, and clinical outcomes.\n" +
-        "  - High stemness associated with specific mutations and epigenetic changes.\n" +
-        "  - Stemness influences tumor-immune interactions and therapy responses.\n" +
-        "- **Implications**:\n" +
-        "  - Stemness indices can serve as biomarkers for prognosis and treatment planning.\n" +
-        "  - Potential to guide the development of differentiation therapies.",
-      speakerNotes: "In summary, this study successfully developed novel stemness indices that provide valuable insights into the degree of dedifferentiation in tumors. The indices correlate with important clinical features, including tumor aggressiveness and patient outcomes. By understanding the role of stemness in cancer progression and therapy resistance, we can improve prognostic tools and develop targeted treatments that may overcome current therapeutic challenges.",
-      _meta: {
-        usage: {
-          prompt_tokens: 302,
-          completion_tokens: 207,
-          total_tokens: 509,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "Future Directions",
-      markdownContent: "- **Clinical Validation**:\n" +
-        "  - Validate stemness indices in clinical trials and larger patient cohorts.\n" +
-        "- **Therapeutic Development**:\n" +
-        "  - Investigate identified compounds in preclinical models targeting cancer stemness.\n" +
-        "- **Combination Therapies**:\n" +
-        "  - Explore the efficacy of combining stemness-targeting agents with immunotherapies.\n" +
-        "- **Personalized Medicine**:\n" +
-        "  - Implement stemness indices in personalized treatment planning.\n" +
-        "- **Further Research**:\n" +
-        "  - Study the mechanisms driving stemness in different tumor microenvironments.",
-      speakerNotes: "Looking ahead, it's essential to validate these stemness indices in clinical settings to confirm their utility as prognostic biomarkers. Further research should focus on testing the identified compounds in preclinical models to assess their effectiveness in targeting cancer stem cells. Combining stemness-targeting therapies with immunotherapies could enhance treatment responses. Ultimately, incorporating stemness assessments into personalized medicine approaches may improve patient outcomes by tailoring therapies to the dedifferentiation status of tumors.",
-      _meta: {
-        usage: {
-          prompt_tokens: 310,
-          completion_tokens: 216,
-          total_tokens: 526,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "Acknowledgments and References",
-      markdownContent: "- **Authors of the Study**:\n" +
-        "  - [Paper's authors' names], whose work provided the foundation for this presentation.\n" +
-        "- **Data Sources**:\n" +
-        "  - The Cancer Genome Atlas (TCGA).\n" +
-        "  - Progenitor Cell Biology Consortium (PCBC).\n" +
-        "- **Additional References**:\n" +
-        "  - Relevant literature on cancer stemness and tumor dedifferentiation.",
-      speakerNotes: "I want to acknowledge the authors of the original study for their significant contributions to cancer research. Their innovative approach to quantifying cancer stemness has provided valuable insights that could impact future therapies. I also recognize the importance of TCGA and PCBC for providing the extensive datasets used in this research. Thank you all for your attention, and I'm happy to take any questions.",
-      _meta: {
-        usage: {
-          prompt_tokens: 267,
-          completion_tokens: 169,
-          total_tokens: 436,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "Q&A Session",
-      markdownContent: "",
-      speakerNotes: "I'd now like to open the floor for any questions or discussions you might have regarding this presentation. Please feel free to ask about any aspects of the study, its implications, or areas that you'd like me to elaborate on further.",
-      _meta: {
-        usage: {
-          prompt_tokens: 162,
-          completion_tokens: 59,
-          total_tokens: 221,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "Thank You",
-      markdownContent: "",
-      speakerNotes: "Thank you for your time and engagement during this presentation. I appreciate your interest and the opportunity to discuss this important research with you all.",
-      _meta: {
-        usage: {
-          prompt_tokens: 143,
-          completion_tokens: 40,
-          total_tokens: 183,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
-      }
-    },
-    {
-      title: "Information Extraction",
-      markdownContent: "- Extracting information from text is a key task in natural language processing.\n" +
-        "- This process involves identifying and categorizing relevant data points.\n" +
-        "- Various tools and techniques can be used to achieve efficient extraction, including:\n" +
-        "  - Regular expressions\n" +
-        "  - Natural language processing libraries\n" +
-        "  - Manual annotation methods\n" +
-        "- The goal is to transform unstructured data into structured formats for analysis and reporting.",
-      speakerNotes: "In this slide, we'll explore the process of extracting information from unstructured text. We will cover the techniques, tools, and goals associated with this important task in natural language processing.",
-      _meta: {
-        usage: {
-          prompt_tokens: 109,
-          completion_tokens: 129,
-          total_tokens: 238,
-          prompt_tokens_details: { cached_tokens: 0 },
-          completion_tokens_details: { reasoning_tokens: 0 }
-        }
+  {
+    "title": "Deciphering Cancer Stemness in Tumors: A Novel Stemness Index for Oncogenic Dedifferentiation",
+    "markdownContent": "## Speaker Notes:\n\nWelcome everyone. Today, I'll be presenting a summary and discussion of a significant research paper titled \"Deciphering Cancer Stemness in Tumors: A Novel Stemness Index for Oncogenic Dedifferentiation.\" This study was conducted by researchers who aimed to understand the role of stemness in cancer progression by developing new stemness indices. The findings have important implications for cancer biology and potential therapeutic approaches.",
+    "speakerNotes": "Welcome everyone. Today, I'll be presenting a summary and discussion of a significant research paper titled \"Deciphering Cancer Stemness in Tumors: A Novel Stemness Index for Oncogenic Dedifferentiation.\" This study was conducted by researchers who aimed to understand the role of stemness in cancer progression by developing new stemness indices. The findings have important implications for cancer biology and potential therapeutic approaches.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 218,
+        "completion_tokens": 202,
+        "total_tokens": 420,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
       }
     }
-  ]
+  },
+  {
+    "title": "Introduction and Background",
+    "markdownContent": "- **Cancer progression** involves loss of differentiation and gain of stem-cell-like features.\n- **Stemness** refers to a cell's ability for self-renewal and differentiation.\n- Dedifferentiated tumors are often more aggressive and resistant to therapy.\n- The tumor microenvironment influences cancer stemness through hypoxia, cytokines, and other factors.",
+    "speakerNotes": "To begin, it's important to understand the concept of stemness in the context of cancer. Stemness is the property of a cell that allows it to self-renew and differentiate into various cell types. During cancer progression, cells often lose their differentiated features and acquire stem-cell-like characteristics, leading to more aggressive and treatment-resistant tumors. The tumor microenvironment plays a crucial role in this process by providing signals that can promote or inhibit stemness.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 276,
+        "completion_tokens": 176,
+        "total_tokens": 452,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "Central Question",
+    "markdownContent": "## Objective\nDevelop novel stemness indices to quantify oncogenic dedifferentiation.\n\n## Hypothesis\nStemness indices derived from molecular profiles can reveal mechanisms of cancer dedifferentiation.\n\n## Goals\n- Create transcriptomic and epigenetic stemness indices.\n- Analyze associations with oncogenic pathways, mutations, and the tumor microenvironment.\n- Identify potential therapeutic targets and compounds.",
+    "speakerNotes": "The central question addressed by this paper is whether novel stemness indices can be used to quantify the degree of dedifferentiation in tumors and uncover underlying biological mechanisms. The researchers hypothesized that these indices, based on gene expression and DNA methylation data, could provide insights into cancer stemness and its associations with various molecular and clinical features.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 270,
+        "completion_tokens": 164,
+        "total_tokens": 434,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "Methods Overview",
+    "markdownContent": "## Methods Overview\n\n### Data Sources:\n- Non-tumor pluripotent stem cells and differentiated progeny profiles.\n- The Cancer Genome Atlas (TCGA) datasets (12,000 samples, 33 tumor types).\n\n### Stemness Indices Development:\n- Used **One-Class Logistic Regression (OCLR)** machine-learning algorithm.\n- Derived two indices:\n  - **mRNAsi**: mRNA expression-based stemness index.\n  - **mDNAsi**: DNA methylation-based stemness index.\n\n### Validation:\n- Applied indices to external datasets and TCGA samples.\n- Correlated indices with known stemness features and clinical data.",
+    "speakerNotes": "The researchers utilized publicly available datasets, including profiles from stem cells and their differentiated progeny, as well as extensive data from TCGA. They developed two stemness indices using the OCLR algorithm—one based on mRNA expression (mRNAsi) and the other on DNA methylation (mDNAsi). These indices range from zero (low stemness) to one (high stemness). The indices were validated using external datasets and were applied to TCGA samples to explore associations with various molecular and clinical features.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 360,
+        "completion_tokens": 262,
+        "total_tokens": 622,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "mRNA Expression-Based Stemness Index (mRNAsi)",
+    "markdownContent": "## Validation:\n- Higher mRNAsi in stem cells compared to differentiated cells.\n- Stratified tumors by known stemness-related features.\n\n## Findings:\n- High mRNAsi in germ-cell tumors, basal breast cancer, and lympho-hematopoietic cancers.\n- Enrichment of stemness gene sets and cancer hallmarks.\n- Positive correlation with core stem cell factors (MYC, OCT4, SOX2).\n- Negative correlation with epithelial-mesenchymal transition (EMT) markers.",
+    "speakerNotes": "The mRNA-based stemness index (mRNAsi) effectively distinguished stem cells from differentiated cells. In tumors, higher mRNAsi values were observed in types known for their dedifferentiated phenotypes, such as germ-cell tumors and basal breast cancer. The index correlated positively with known stemness genes like MYC, OCT4, and SOX2, and negatively with EMT markers. This suggests that tumors with high mRNAsi maintain stem-cell-like characteristics and an epithelial phenotype.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 336,
+        "completion_tokens": 231,
+        "total_tokens": 567,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "DNA Methylation-Based Stemness Index (mDNAsi)",
+    "markdownContent": "## Development\n- Focused on hypomethylated stemness-specific enhancer regions.\n- Identified 219 CpG probes associated with stemness.\n\n## Findings\n- Higher mDNAsi in stem cells compared to differentiated cells.\n- Tumor samples showed varying degrees of stemness.\n- High mDNAsi associated with hypomethylation at key pluripotency enhancers (e.g., SOX2-OCT4 motifs).",
+    "speakerNotes": "The DNA methylation-based stemness index (mDNAsi) was developed by focusing on hypomethylated enhancer regions specific to stem cells. The index effectively differentiated stem cells from their differentiated counterparts. In tumors, high mDNAsi values were associated with hypomethylation at enhancers critical for maintaining pluripotency, such as those bound by SOX2 and OCT4. This indicates that DNA methylation patterns play a significant role in regulating cancer stemness.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 322,
+        "completion_tokens": 216,
+        "total_tokens": 538,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "Correlation Between mRNAsi and mDNAsi",
+    "markdownContent": "- **General Correlation**:\n  - Positive correlation for most tumor types.\n- **Exceptions**:\n  - Negative correlation in lower-grade glioma (LGG), thyroid carcinoma (THCA), thymoma (THYM).\n- **Possible Explanation**:\n  - IDH1/2 mutations in gliomas leading to hypermethylation (G-CIMP phenotype).\n  - mDNAsi reflects epigenetic changes not captured by mRNAsi.",
+    "speakerNotes": "While mRNAsi and mDNAsi generally showed positive correlation across various tumor types, exceptions were found in gliomas and certain other cancers. In gliomas, IDH1/2 mutations cause widespread DNA hypermethylation, leading to lower mDNAsi despite high stemness indicated by mRNAsi. This suggests that mRNAsi and mDNAsi capture different aspects of cancer stemness, and both indices are valuable for a comprehensive understanding.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 311,
+        "completion_tokens": 213,
+        "total_tokens": 524,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "Stemness and Tumor Stratification",
+    "markdownContent": "- **Breast Cancer (BRCA)**:\n  - High mRNAsi in basal subtype (aggressive, undifferentiated).\n  - Correlation with ER-negative status and TP53 mutations.\n- **Acute Myeloid Leukemia (AML)**:\n  - High mRNAsi in less differentiated FAB subtypes (M0-M2).\n  - Low mRNAsi in more differentiated M3 subtype.\n- **Gliomas**:\n  - High mDNAsi associated with high-grade glioblastomas (GBMs).\n  - Correlation with aggressive molecular subtypes and poor prognosis.",
+    "speakerNotes": "Applying the stemness indices to specific cancers demonstrated their ability to stratify tumors based on dedifferentiation. In breast cancer, high mRNAsi was associated with the basal subtype, known for its aggressiveness and poor prognosis. In AML, the index correlated well with the degree of myeloid differentiation. In gliomas, high mDNAsi was linked to high-grade tumors and adverse clinical outcomes.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 325,
+        "completion_tokens": 230,
+        "total_tokens": 555,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "Pan-Cancer Stemness Landscape",
+    "markdownContent": "## Associations with Mutations:\n- High mDNAsi linked to mutations in NSD1 (HNSC) and SETD2 (LUAD).\n\n## MicroRNA and Protein Expression:\n- Correlation with miR-200 family, FOXM1, CYCLINB1.\n\n## Clinical Features:\n- High stemness indices associated with higher tumor grades and poor prognosis in several cancers.\n\n## Immune Microenvironment:\n- High stemness indices often associated with lower immune cell infiltration and PD-L1 expression.",
+    "speakerNotes": "Across various cancers, the stemness indices revealed associations with key mutations, microRNA, and protein expression levels. For example, mutations in genes regulating epigenetics were linked to higher stemness, suggesting a role in dedifferentiation. High stemness was often correlated with higher tumor grades and worse clinical outcomes. Additionally, tumors with high stemness indices tended to have lower immune cell infiltration and PD-L1 expression, which may impact responses to immunotherapy.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 329,
+        "completion_tokens": 223,
+        "total_tokens": 552,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "Stemness in Metastases and Tumor Heterogeneity",
+    "markdownContent": "## Metastatic Tumors:\n- Generally higher mRNAsi compared to primary tumors.\n- Indicates increased dedifferentiation in metastasis.\n\n## Intratumor Heterogeneity:\n- Single-cell analyses showed variation in stemness within tumors.\n- Greater heterogeneity observed in gliomas compared to breast cancers.\n\n## Clinical Implications:\n- High stemness may contribute to therapy resistance and recurrence.",
+    "speakerNotes": "When comparing primary tumors to metastases, metastatic samples typically exhibited higher stemness indices, suggesting that dedifferentiation plays a role in tumor spread. Single-cell analyses revealed significant intratumor heterogeneity in stemness, particularly in gliomas. This heterogeneity may contribute to challenges in treatment, as subpopulations of cancer stem cells can drive resistance and recurrence.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 289,
+        "completion_tokens": 184,
+        "total_tokens": 473,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "Stemness and the Immune Response",
+    "markdownContent": "## Key Findings\n\n- **Negative Correlation**:\n  - High stemness indices associated with lower leukocyte fractions.\n  - Lower PD-L1 expression in tumors with high stemness.\n- **Immune Cell Populations**:\n  - Decreased infiltration of CD8+ T cells and activated immune cells.\n- **Implications for Immunotherapy**:\n  - Tumors with high stemness may be less responsive to checkpoint inhibitors.\n  - Potential need for combination therapies targeting both stemness and immune evasion.",
+    "speakerNotes": "The study found that tumors with high stemness indices often have fewer immune cells infiltrating the tumor microenvironment and lower expression of PD-L1. This suggests that these tumors might evade immune detection and could be less responsive to immunotherapies that rely on activating immune cells. Understanding the relationship between stemness and the immune response is crucial for developing effective treatment strategies.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 293,
+        "completion_tokens": 202,
+        "total_tokens": 495,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "Identification of Potential Therapeutic Compounds",
+    "markdownContent": "## Connectivity Map (CMap) Analysis:\n- Identified compounds that could target stemness-related pathways.\n\n## Key Compounds:\n- Dopamine receptor antagonists (thioridazine, prochlorperazine).\n- Wnt signaling inhibitor (pyrvinium).\n- HSP90 inhibitor (tanespimycin).\n- Protein synthesis inhibitor (puromycin).\n\n## Mechanisms of Action:\n- Many compounds shared mechanisms targeting stemness pathways.\n\n## Clinical Relevance:\n- Potential for repurposing existing drugs to target cancer stemness.",
+    "speakerNotes": "By using CMap analysis, the researchers identified several compounds that may inhibit cancer stemness. Notably, some of these compounds are already used clinically for other indications, such as dopamine receptor antagonists. This opens the possibility of repurposing existing drugs to target cancer stem cells, potentially improving therapeutic outcomes. The shared mechanisms of action among these compounds highlight key pathways that could be targeted in anti-stemness therapies.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 327,
+        "completion_tokens": 222,
+        "total_tokens": 549,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "Summary and Conclusions",
+    "markdownContent": "- **Novel Stemness Indices**:\n  - Developed mRNAsi and mDNAsi to quantify cancer stemness.\n- **Key Findings**:\n  - Stemness indices correlate with tumor dedifferentiation, aggressiveness, and clinical outcomes.\n  - High stemness associated with specific mutations and epigenetic changes.\n  - Stemness influences tumor-immune interactions and therapy responses.\n- **Implications**:\n  - Stemness indices can serve as biomarkers for prognosis and treatment planning.\n  - Potential to guide the development of differentiation therapies.",
+    "speakerNotes": "In summary, this study successfully developed novel stemness indices that provide valuable insights into the degree of dedifferentiation in tumors. The indices correlate with important clinical features, including tumor aggressiveness and patient outcomes. By understanding the role of stemness in cancer progression and therapy resistance, we can improve prognostic tools and develop targeted treatments that may overcome current therapeutic challenges.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 302,
+        "completion_tokens": 207,
+        "total_tokens": 509,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "Future Directions",
+    "markdownContent": "- **Clinical Validation**:\n  - Validate stemness indices in clinical trials and larger patient cohorts.\n- **Therapeutic Development**:\n  - Investigate identified compounds in preclinical models targeting cancer stemness.\n- **Combination Therapies**:\n  - Explore the efficacy of combining stemness-targeting agents with immunotherapies.\n- **Personalized Medicine**:\n  - Implement stemness indices in personalized treatment planning.\n- **Further Research**:\n  - Study the mechanisms driving stemness in different tumor microenvironments.",
+    "speakerNotes": "Looking ahead, it's essential to validate these stemness indices in clinical settings to confirm their utility as prognostic biomarkers. Further research should focus on testing the identified compounds in preclinical models to assess their effectiveness in targeting cancer stem cells. Combining stemness-targeting therapies with immunotherapies could enhance treatment responses. Ultimately, incorporating stemness assessments into personalized medicine approaches may improve patient outcomes by tailoring therapies to the dedifferentiation status of tumors.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 310,
+        "completion_tokens": 216,
+        "total_tokens": 526,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "Acknowledgments and References",
+    "markdownContent": "- **Authors of the Study**:\n  - [Paper's authors' names], whose work provided the foundation for this presentation.\n- **Data Sources**:\n  - The Cancer Genome Atlas (TCGA).\n  - Progenitor Cell Biology Consortium (PCBC).\n- **Additional References**:\n  - Relevant literature on cancer stemness and tumor dedifferentiation.",
+    "speakerNotes": "I want to acknowledge the authors of the original study for their significant contributions to cancer research. Their innovative approach to quantifying cancer stemness has provided valuable insights that could impact future therapies. I also recognize the importance of TCGA and PCBC for providing the extensive datasets used in this research. Thank you all for your attention, and I'm happy to take any questions.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 267,
+        "completion_tokens": 169,
+        "total_tokens": 436,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "Q&A Session",
+    "markdownContent": "",
+    "speakerNotes": "I'd now like to open the floor for any questions or discussions you might have regarding this presentation. Please feel free to ask about any aspects of the study, its implications, or areas that you'd like me to elaborate on further.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 162,
+        "completion_tokens": 59,
+        "total_tokens": 221,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "Thank You",
+    "markdownContent": "",
+    "speakerNotes": "Thank you for your time and engagement during this presentation. I appreciate your interest and the opportunity to discuss this important research with you all.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 143,
+        "completion_tokens": 40,
+        "total_tokens": 183,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  },
+  {
+    "title": "Information Extraction",
+    "markdownContent": "- Extracting information from text is a key task in natural language processing.\n- This process involves identifying and categorizing relevant data points.\n- Various tools and techniques can be used to achieve efficient extraction, including:\n  - Regular expressions\n  - Natural language processing libraries\n  - Manual annotation methods\n- The goal is to transform unstructured data into structured formats for analysis and reporting.",
+    "speakerNotes": "In this slide, we'll explore the process of extracting information from unstructured text. We will cover the techniques, tools, and goals associated with this important task in natural language processing.",
+    "_meta": {
+      "usage": {
+        "prompt_tokens": 109,
+        "completion_tokens": 129,
+        "total_tokens": 238,
+        "prompt_tokens_details": { "cached_tokens": 0 },
+        "completion_tokens_details": { "reasoning_tokens": 0 }
+      }
+    }
+  }
+]
