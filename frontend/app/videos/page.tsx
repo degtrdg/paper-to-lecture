@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Video, ChevronRight, Lock } from "lucide-react"
+import { Video, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { createClient } from '@/utils/supabase/client'
@@ -12,8 +12,8 @@ interface VideoItem {
   id: string;
   title: string;
   thumbnail: string;
-  duration: string;
-  views: number;
+  link: string;
+  created_at: string;
 }
 
 export default function VideosPage() {
@@ -26,16 +26,48 @@ export default function VideosPage() {
         .from('videos')
         .select('*')
         .order('created_at', { ascending: false })
+        .limit(10)
 
       if (error) {
         console.error('Error fetching videos:', error)
       } else {
-        setVideos(data || [])
+        const processedVideos = data.map(processVideo)
+        setVideos(processedVideos)
       }
     }
 
     fetchVideos()
   }, [])
+
+  const processVideo = (video: any): VideoItem => {
+    console.log(video)  
+    if (video.video_link && (video.video_link.includes('youtube.com') || video.video_link.includes('youtu.be'))) {
+      const videoId = extractYouTubeId(video.video_link)
+      console.log(videoId)
+      return {
+        id: video.id,
+        title: `YouTube Video ${videoId}`,
+        thumbnail: `https://img.youtube.com/vi/${videoId}/0.jpg`,
+        link: video.link,
+        created_at: video.created_at
+      }
+    } else {
+      return {
+        id: video.id,
+        title: 'Variational Autoencoder For Cancer Diagnosis',
+        thumbnail: '/placeholder-audio.png',  
+        link: video.link || '',
+        created_at: video.created_at
+      }
+    }
+  }
+
+  const extractYouTubeId = (url: string): string => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+    const match = url.match(regExp)
+    console.log(match)
+    return (match && match[2].length === 11) ? match[2] : ''
+  }
 
   return (
     <div className="container mx-auto py-8">
@@ -57,15 +89,14 @@ export default function VideosPage() {
                 </div>
               </div>
               <h3 className="text-xl font-semibold mb-2">{video.title}</h3>
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>{video.duration}</span>
-                <span>{video.views} views</span>
+              <div className="text-sm text-muted-foreground">
+                Created: {new Date(video.created_at).toLocaleDateString()}
               </div>
             </CardContent>
             <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <Button asChild variant="secondary" size="sm" className="flex items-center">
-                <Link href={`/videos/viewer/${video.id}`}>
+                <Link href={`/videos/viewer?id=${video.id}`}>
                   Watch Video <ChevronRight className="w-4 h-4 ml-1" />
                 </Link>
               </Button>

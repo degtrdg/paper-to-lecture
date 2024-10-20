@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Mic, MicOff } from "lucide-react";
 import { VoiceProvider, useVoice, VoiceReadyState } from "@humeai/voice-react";
 import { fetchAccessToken } from "hume";
+import { useSearchParams } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 
 const mockChapters = [
   { timestamp: 0, name: "Introduction" },
@@ -62,6 +64,10 @@ export default function LectureViewer() {
   const playerRef = useRef<YT['Player'] | null>(null);
   const HUME_API_KEY = process.env.NEXT_PUBLIC_HUME_API_KEY ?? '';
   const HUME_SECRET_KEY = process.env.NEXT_PUBLIC_HUME_SECRET_KEY ?? '';
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const videoId = searchParams.get('id');
+  const playerContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const getToken = async () => {
@@ -92,18 +98,16 @@ export default function LectureViewer() {
         youtubeAPILoaded.current = true;
       }
 
-      if (!playerRef.current) {
+      if (!playerRef.current && playerContainerRef.current) {
         console.log("Initializing YouTube player");
-        const playerElement = document.getElementById('youtube-player');
-        if (!playerElement) {
-          console.error("YouTube player element not found");
-          return;
-        }
+        const playerElement = document.createElement('div');
+        playerElement.id = 'youtube-player';
+        playerContainerRef.current.appendChild(playerElement);
 
         playerRef.current = new window.YT.Player('youtube-player', {
           height: '360',
           width: '640',
-          videoId: 'dQw4w9WgXcQ', 
+          videoId: '',
           events: {
             onReady: (event: any) => {
               console.log("YouTube player is ready");
@@ -119,10 +123,66 @@ export default function LectureViewer() {
 
     initializePlayer();
 
-    return () => {
+    const fetchVideoUrl = async () => {
+      if (!videoId) return;
 
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('videos')
+        .select('video_link')
+        .eq('id', videoId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching video URL:', error);
+      } else if (data) {
+        console.log("Fetched video URL:", data.video_link);
+        setVideoUrl(data.video_link);
+      }
     };
-  }, []);
+
+    fetchVideoUrl();
+
+    return () => {
+      // Cleanup function
+      if (playerRef.current) {
+        playerRef.current.destroy();
+      }
+    };
+  }, [videoId]);
+
+  useEffect(() => {
+    if (videoUrl && playerRef.current && isPlayerReady) {
+      const embedId = extractYouTubeEmbedId(videoUrl);
+      if (embedId) {
+        console.log("Loading video with embed ID:", embedId);
+        playerRef.current.loadVideoById(embedId);
+      }
+    }
+  }, [videoUrl, isPlayerReady]);
+
+  const extractYouTubeEmbedId = (url: string): string => {
+    let embedId = '';
+    
+    // Handle youtube.com URLs
+    const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(?:embed\/)?(?:v\/)?(?:shorts\/)?(.+)/;
+    const match = url.match(youtubeRegex);
+    
+    if (match && match[1]) {
+      embedId = match[1].split('&')[0]; // Remove any additional parameters
+    }
+    
+    // Handle youtu.be URLs
+    const youtubeShortRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtu\.be)\/(.+)/;
+    const shortMatch = url.match(youtubeShortRegex);
+    
+    if (shortMatch && shortMatch[1]) {
+      embedId = shortMatch[1];
+    }
+
+    console.log("Extracted embed ID:", embedId);
+    return embedId;
+  };
 
   const handleChapterChange = (direction: number) => {
     let newChapter = currentChapter + direction;
@@ -189,7 +249,7 @@ export default function LectureViewer() {
           </div>
 
           <div className="aspect-video mb-4 flex justify-center">
-            <div id="youtube-player" className="w-full h-full">
+            <div ref={playerContainerRef} className="w-full h-full">
               {!isPlayerReady && (
                 <div className="w-full h-full bg-gray-200 flex items-center justify-center">
                   Loading YouTube player...
