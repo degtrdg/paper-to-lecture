@@ -31,9 +31,16 @@ export async function POST(request: NextRequest) {
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            console.error('Cartesia API Error:', errorData);
-            return NextResponse.json({ error: 'Failed to generate audio' }, { status: response.status });
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                console.error('Cartesia API Error:', errorData);
+                return NextResponse.json({ error: 'Failed to generate audio', details: errorData }, { status: response.status });
+            } else {
+                const errorText = await response.text();
+                console.error('Cartesia API Error:', errorText);
+                return NextResponse.json({ error: 'Failed to generate audio', details: errorText }, { status: response.status });
+            }
         }
 
         const audioBuffer = await response.arrayBuffer();
@@ -45,8 +52,8 @@ export async function POST(request: NextRequest) {
                 'Content-Disposition': 'attachment; filename="audio.mp3"',
             },
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error generating audio:', error);
-        return NextResponse.json({ error: 'Failed to generate audio' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to generate audio', details: error.message }, { status: 500 });
     }
 }

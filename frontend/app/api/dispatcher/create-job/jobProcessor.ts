@@ -38,7 +38,7 @@ export async function processJob(user_id: string, pdfUrl: string) {
         // Then, call the truncate text api
         const truncateTextResult = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/paper/truncate-text`, {
             method: 'POST',
-            body: JSON.stringify({ rawPaper: paperTextExtractorResponse['extracted_text'] }),
+            body: JSON.stringify({ rawPaper: paperTextExtractorResponse['full_text'] }),
         });
         const truncateTextResponse = await truncateTextResult.json();
         console.log("Truncated paper:", truncateTextResponse);
@@ -69,15 +69,92 @@ export async function processJob(user_id: string, pdfUrl: string) {
             body: JSON.stringify({ slidesRaw: createSlidesResponse['slides'] }),
         });
         const dataExtractorResponse = await dataExtractorResult.json();
+        console.log("Data extractor response: ", dataExtractorResponse['slides']);
+        console.log("Data extractor response (slide 1): ", dataExtractorResponse['slides'][1]);
+        
+        console.log("Data extractor response (speaker notes): ", dataExtractorResponse['slides'][1]['speakerNotes']);
+
+        
         await supabase
         .from('jobs')
         .update({ status: 6 })
         .eq('user_id', user_id);
+        // Now, for eachc slide, we should take the speakerNotes and create a voiceover for it
+        // We can do this by calling the tts api
+        let voiceovers = [];
+        for (let i = 0; i < dataExtractorResponse['slides'].length; i++) {
+            if (dataExtractorResponse['slides'][i] && dataExtractorResponse['slides'][i]['speakerNotes'] === '') {
+                voiceovers.push('');
+                continue;
+            }
+            console.log("TTSing text: ", dataExtractorResponse['slides'][i]['speakerNotes']);
+            console.log("TTSing slide: ", dataExtractorResponse['slides'][i]);
+            
+            try {
+                const ttsResult = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/tts`, {
+                    method: 'POST',
+                    body: JSON.stringify({ text: dataExtractorResponse['slides'][i]['speakerNotes'] }),
+                });
+                console.log("TTS result: ", ttsResult.status);
 
+                if (!ttsResult.ok) {
+                    console.error(`TTS API returned status ${ttsResult.status} for slide ${i}`);
+                    voiceovers.push(''); // Push an empty string for failed TTS
+                    continue; // Skip to the next iteration
+                }
+
+                const audioBuffer = await ttsResult.arrayBuffer();
+                const base64Audio = Buffer.from(audioBuffer).toString('base64');
+                voiceovers.push(base64Audio);
+            } catch (error) {
+                console.error(`Error processing TTS for slide ${i}:`, error);
+                voiceovers.push(''); // Push an empty string for failed TTS
+            }
+        }
+        dataExtractorResponse['voiceovers'] = voiceovers;
+        console.log("Slides with voiceovers: ", dataExtractorResponse);
         // Then ITS SHOWTIME
         await supabase
         .from('jobs')
         .update({ status: 7 })
+        .eq('user_id', user_id);
+
+        // Prepare data for create_video endpoint
+        const formData = new FormData();
+
+        // Add slides JSON
+        const slidesBlob = new Blob([JSON.stringify(dataExtractorResponse.slides)], {
+            type: 'application/json'
+        });
+        formData.append('slides', slidesBlob, 'slides.json');
+
+        // Add voiceover files
+        dataExtractorResponse.voiceovers.forEach((voiceover: string | null, index: number) => {
+            if (voiceover) {
+                const audioBlob = new Blob([Buffer.from(voiceover, 'base64')], {
+                    type: 'audio/mpeg'
+                });
+                formData.append('voiceovers', audioBlob, `voiceover_${index}.mp3`);
+            }
+        });
+
+        // Call create_video endpoint
+        const createVideoResult = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/create_video`, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!createVideoResult.ok) {
+            throw new Error(`Failed to create video: ${createVideoResult.statusText}`);
+        }
+
+        const createVideoResponse = await createVideoResult.json();
+
+        // Add to a supabase table
+
+        await supabase
+        .from('jobs')
+        .update({ status: 8 })
         .eq('user_id', user_id);
 
     } catch (error) {
