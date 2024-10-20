@@ -4,3 +4,4 @@ requests
 beautifulsoup4
 google-api-python-client
 PyPDF2
+instructor
