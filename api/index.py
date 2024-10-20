@@ -12,6 +12,7 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.oauth2.credentials import Credentials
 import os
+import PyPDF2
 
 app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json")
 
@@ -69,6 +70,34 @@ async def upload_video_endpoint(video: UploadFile = File(...), request: VideoUpl
         os.remove(temp_file_path)
 
         return {"video_id": video_id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/extract_pdf_text")
+async def extract_pdf_text(pdf_file: UploadFile = File(...)):
+    try:
+        # Read the uploaded PDF file
+        pdf_content = await pdf_file.read()
+        
+        # Create a PDF reader object
+        pdf_reader = PyPDF2.PdfReader(BytesIO(pdf_content))
+        
+        # Initialize an empty string to store all the text
+        all_text = ""
+        
+        # Iterate through all pages and extract text
+        for page in pdf_reader.pages:
+            all_text += page.extract_text()
+        
+        # Prepare the response
+        response = {
+            "total_pages": len(pdf_reader.pages),
+            "total_characters": len(all_text),
+            "extracted_text": all_text,
+            "full_text": all_text
+        }
+        
+        return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -160,7 +189,6 @@ def create_slide(title, content, image_url=None, image_subtitle=None, width=1920
             print(f"Error loading image: {e}")
 
     return slide
-
 
 def wrap_text(text, font, max_width):
     words = text.split()
