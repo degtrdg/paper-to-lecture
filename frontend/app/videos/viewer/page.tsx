@@ -18,15 +18,6 @@ const mockChapters = [
   { timestamp: 480, name: "Conclusion" }
 ];
 
-declare global {
-  interface Window {
-    YT: {
-      Player: new (elementId: string, options: any) => YT['Player'];
-    };
-    onYouTubeIframeAPIReady: () => void;
-  }
-}
-
 interface YT {
   Player: {
     seekTo(seconds: number, allowSeekAhead?: boolean): void;
@@ -68,6 +59,7 @@ export default function LectureViewer() {
   const searchParams = useSearchParams();
   const videoId = searchParams.get('id');
   const playerContainerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const getToken = async () => {
@@ -193,8 +185,8 @@ export default function LectureViewer() {
     if (newChapter >= chapters.length) newChapter = chapters.length - 1;
 
     setCurrentChapter(newChapter);
-    if (playerRef.current) {
-      playerRef.current.seekTo(chapters[newChapter].timestamp);
+    if (videoRef.current) {
+      videoRef.current.currentTime = chapters[newChapter].timestamp;
     }
   };
   const systemPrompt = `
@@ -252,13 +244,20 @@ export default function LectureViewer() {
           </div>
 
           <div className="aspect-video mb-4 flex justify-center">
-            <div ref={playerContainerRef} className="w-full h-full">
-              {!isPlayerReady && (
-                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                  Loading YouTube player...
-                </div>
-              )}
-            </div>
+            {videoUrl ? (
+              <video
+                ref={videoRef}
+                src={videoUrl}
+                controls
+                className="w-full h-full"
+              >
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                Loading video...
+              </div>
+            )}
           </div>
 
           <Messages />
