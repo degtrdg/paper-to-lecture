@@ -162,14 +162,14 @@ export default function LectureViewer() {
   }, [videoUrl, isPlayerReady]);
 
   const extractYouTubeEmbedId = (url: string): string => {
-    let embedId = '';
+    let videoId = '';
     
     // Handle youtube.com URLs
     const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(?:embed\/)?(?:v\/)?(?:shorts\/)?(.+)/;
     const match = url.match(youtubeRegex);
     
     if (match && match[1]) {
-      embedId = match[1].split('&')[0]; // Remove any additional parameters
+      videoId = match[1].split('&')[0]; // Remove any additional parameters
     }
     
     // Handle youtu.be URLs
@@ -177,8 +177,11 @@ export default function LectureViewer() {
     const shortMatch = url.match(youtubeShortRegex);
     
     if (shortMatch && shortMatch[1]) {
-      embedId = shortMatch[1];
+      videoId = shortMatch[1];
     }
+
+    // Generate the embed ID with the additional parameter
+    const embedId = `${videoId}?si=IcRR1Xp9IZ-pvzdH`;
 
     console.log("Extracted embed ID:", embedId);
     return embedId;
