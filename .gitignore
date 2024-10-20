@@ -3,3 +3,4 @@
 **/client_secret.json
 .DS_Store
 **/__pycache__
+**/slides1
