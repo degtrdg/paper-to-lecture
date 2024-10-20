@@ -21,8 +21,6 @@ export default function RootLayout({
 }) {
   const headersList = headers();
   const pathname = headersList.get("x-invoke-path") || "";
-  const isAuthPage = pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up');
-  const isLandingPage = pathname === '/';
 
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
@@ -35,8 +33,8 @@ export default function RootLayout({
         >
           <div className="min-h-screen w-full bg-white text-black dark:bg-background dark:text-foreground bg-graph-paper dark:bg-none">
             <div className="flex">
-              {!isAuthPage && !isLandingPage && <Sidebar />}
-              <main className="flex-1">
+              <Sidebar initialPathname={pathname} />
+              <main className="flex-1 overflow-y-auto">
                 {children}
               </main>
             </div>

@@ -3,7 +3,10 @@ import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { FaGoogle, FaGithub } from 'react-icons/fa';
 import { SmtpMessage } from "../smtp-message";
 
 export default function Signup({ searchParams }: { searchParams: Message }) {
@@ -16,33 +19,67 @@ export default function Signup({ searchParams }: { searchParams: Message }) {
   }
 
   return (
-    <>
-      <form className="flex flex-col min-w-64 max-w-64 mx-auto">
-        <h1 className="text-2xl font-medium">Sign up</h1>
-        <p className="text-sm text text-foreground">
+    <Card className="w-full max-w-md">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
+        <CardDescription>
+          Enter your email and choose a password to get started
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" name="email" type="email" placeholder="you@example.com" required />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              minLength={6}
+              required
+            />
+          </div>
+          <SubmitButton className="w-full" formAction={signUpAction} pendingText="Signing up...">
+            Sign up
+          </SubmitButton>
+        </form>
+        
+        <div className="mt-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with
+              </span>
+            </div>
+          </div>
+          
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <Button variant="outline" type="button">
+              <FaGoogle className="mr-2 h-4 w-4" /> Google
+            </Button>
+            <Button variant="outline" type="button">
+              <FaGithub className="mr-2 h-4 w-4" /> GitHub
+            </Button>
+          </div>
+        </div>
+        
+        <p className="mt-4 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link className="text-primary font-medium underline" href="/sign-in">
+          <Link className="text-primary hover:underline" href="/sign-in">
             Sign in
           </Link>
         </p>
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-          <Label htmlFor="email">Email</Label>
-          <Input name="email" placeholder="you@example.com" required />
-          <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            name="password"
-            placeholder="Your password"
-            minLength={6}
-            required
-          />
-          <SubmitButton formAction={signUpAction} pendingText="Signing up...">
-            Sign up
-          </SubmitButton>
-          <FormMessage message={searchParams} />
-        </div>
-      </form>
+        
+        <FormMessage message={searchParams} />
+      </CardContent>
       <SmtpMessage />
-    </>
+    </Card>
   );
 }
