@@ -95,7 +95,7 @@ export default function HomePage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ url: pdfUrl, user: user.id }),
+        body: JSON.stringify({ pdfUrl: pdfUrl, user: user.id }),
       })
       if (!response.ok) {
         throw new Error('Failed to start job')

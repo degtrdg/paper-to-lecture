@@ -14,7 +14,6 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
 export async function POST(request: NextRequest) {
   try {
     const { pdfUrl } = await request.json();
-
     // Download the PDF
     const pdfResponse = await axios.get(pdfUrl, { responseType: 'arraybuffer' });
     const pdfBuffer = Buffer.from(pdfResponse.data);
@@ -39,10 +38,7 @@ export async function POST(request: NextRequest) {
     // Save the new PDF without reference pages
     const pdfBytes = await newPdfDoc.save();
 
-    // Send the modified PDF to another API
-    const apiResponse = await sendToAnotherApi(pdfBytes);
-
-    return NextResponse.json({ success: true, apiResponse });
+    return NextResponse.json({ success: true, pdf: pdfBytes });
   } catch (error) {
     console.error('Error processing PDF:', error);
     return NextResponse.json({ success: false, error: 'Failed to process PDF' }, { status: 500 });
@@ -63,27 +59,7 @@ async function checkForReferences(pageBuffer: Uint8Array): Promise<boolean> {
     "Is this page a reference page? (one of the pages in the PDF that soley contains references) Answer with just 'yes' or 'no'.",
     { inlineData: { data: Buffer.from(pageBuffer).toString('base64'), mimeType: "application/pdf" } },
   ]);
-
+  console.log("Checking for references:", result);
   const response = await result.response;
-  console.log(response.text());
   return response.text().toLowerCase().trim().includes('yes');
-}
-
-async function sendToAnotherApi(pdfBytes: Uint8Array): Promise<any> {
-  const apiUrl = process.env.ANOTHER_API_URL;
-  if (!apiUrl) {
-    throw new Error('ANOTHER_API_URL environment variable is not set');
-  }
-
-  try {
-    const response = await axios.post(apiUrl, pdfBytes, {
-      headers: {
-        'Content-Type': 'application/pdf',
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error sending data to another API:', error);
-    throw error;
-  }
 }

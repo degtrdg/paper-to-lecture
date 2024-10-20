@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
 
         const slides = response.choices[0].message.content;
 
-        return NextResponse.json({ slides });
+        return NextResponse.json({ slides: slides });
     } catch (error) {
         console.error('Error generating slides:', error);
         return NextResponse.json({ error: 'Failed to generate slides' }, { status: 500 });

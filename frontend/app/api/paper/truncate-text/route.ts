@@ -53,8 +53,7 @@ export async function POST(request: NextRequest) {
         });
         console.log(response.choices[0]?.message?.content);
         const extractedText = response.choices[0]?.message?.content || '';
-
-        return NextResponse.json({ extractedText });
+        return NextResponse.json({ extractedText: extractedText });
     } catch (error) {
         console.error('Error processing request:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

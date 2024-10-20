@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+// New import for the background process
+import { processJob } from './jobProcessor';
+
 export async function POST(request: NextRequest) {
     const { pdfUrl, user } = await request.json();
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
-
     // Check if a job already exists for this user and PDF URL
     const { data: existingJob, error: fetchError } = await supabase
         .from('jobs')
@@ -43,6 +45,13 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ status: "error", message: "Failed to create/update job" }, { status: 500 });
     }
 
-    console.log("Job data:", data);
-    return NextResponse.json({ status: "ok", jobId: data[0].id });
+
+    // Start the background process
+    const jobId = data[0].user_id;
+    processJob(jobId, pdfUrl).catch(error => {
+        console.error(`Error processing job ${jobId}:`, error);
+        // Here you might want to update the job status to indicate an error
+    });
+
+    return NextResponse.json({ status: "ok", jobId: jobId });
 }
