@@ -6,6 +6,11 @@ import axios from 'axios';
 // Initialize Google Generative AI
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
 
+
+
+// Argument: pdfUrl
+// Returns: { success: true, apiResponse: { ... } }
+
 export async function POST(request: NextRequest) {
   try {
     const { pdfUrl } = await request.json();

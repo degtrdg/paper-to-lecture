@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
             model: 'o1-preview',
             messages: [{ role: 'user', content: reorgPrompt(truncatedPaper) }],
         });
-
+        console.log(response.choices[0]?.message?.content);
         const extractedText = response.choices[0]?.message?.content || '';
 
         return NextResponse.json({ extractedText });
