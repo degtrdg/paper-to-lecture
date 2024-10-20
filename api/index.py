@@ -122,68 +122,85 @@ async def create_slide_endpoint(slide_request: SlideRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-def create_slide(
-    title, content, image_url=None, image_subtitle=None, width=1920, height=1080
-):
-    # Create a blank white image
-    slide = Image.new("RGB", (width, height), color="white")
-    draw = ImageDraw.Draw(slide)
+def get_default_font(size):
+    try:
+        return ImageFont.truetype("Arial", size)
+    except IOError:
+        return ImageFont.load_default()
 
-    # Load fonts
-    title_font = ImageFont.truetype("Arial", 60)
-    content_font = ImageFont.truetype("Arial", 30)
-    subtitle_font = ImageFont.truetype("Arial", 24)
+def create_slide(title, content, image_url=None, image_subtitle=None, width=1600, height=900):
+    print(f"Creating slide: {title}")
+    try:
+        # Create a blank white image with double the resolution
+        slide = Image.new("RGB", (width, height), color="white")
+        draw = ImageDraw.Draw(slide)
 
-    # Draw title
-    draw.text((50, 50), title, font=title_font, fill="black")
+        # Load fonts with much larger sizes
+        print("Loading fonts...")
+        title_font = get_default_font(1400)  # Dramatically increased
+        content_font = get_default_font(800)  # Dramatically increased
+        subtitle_font = get_default_font(600)  # Dramatically increased
 
-    # Parse and draw content (Markdown)
-    html = markdown.markdown(content)
-    soup = BeautifulSoup(html, "html.parser")
+        # Draw title
+        print("Drawing title...")
+        title_lines = wrap_text(title, title_font, width - 200)
+        y_offset = 20
+        for line in title_lines:
+            draw.text((100, y_offset), line, font=title_font, fill="black")
+            y_offset += 100  # Increased spacing for title lines
 
-    content_width = width // 2 - 100  # Limit content width
-    y_offset = 150
-    for element in soup.find_all(["p", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol"]):
-        if element.name == "p":
-            lines = wrap_text(element.text, content_font, content_width)
-            for line in lines:
-                draw.text((50, y_offset), line, font=content_font, fill="black")
-                y_offset += 40
-        elif element.name.startswith("h"):
-            size = 50 - int(element.name[1]) * 5  # Adjust size based on heading level
-            header_font = ImageFont.truetype("Arial", size)
-            draw.text((50, y_offset), element.text, font=header_font, fill="black")
-            y_offset += size + 10
-        elif element.name in ["ul", "ol"]:
-            for li in element.find_all("li"):
-                bullet_lines = wrap_text(
-                    "• " + li.text, content_font, content_width - 20
-                )
-                for line in bullet_lines:
-                    draw.text((70, y_offset), line, font=content_font, fill="black")
-                    y_offset += 40
+        # Parse and draw content (Markdown)
+        print("Parsing and drawing content...")
+        html = markdown.markdown(content)
+        soup = BeautifulSoup(html, "html.parser")
 
-    # Add image if provided
-    if image_url:
-        try:
-            response = requests.get(image_url)
-            img = Image.open(BytesIO(response.content))
-            img_width = width // 2 - 100
-            img_height = height - 300
-            img.thumbnail((img_width, img_height))
-            slide.paste(img, (width // 2 + 50, 150))
+        content_width = width - 200
+        y_offset += 100  # Add some space after the title
 
-            if image_subtitle:
-                draw.text(
-                    (width // 2 + 50, height - 100),
-                    image_subtitle,
-                    font=subtitle_font,
-                    fill="black",
-                )
-        except Exception as e:
-            print(f"Error loading image: {e}")
+        for element in soup.find_all(["p", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol"]):
+            if element.name == "p":
+                lines = wrap_text(element.text, content_font, content_width)
+                for line in lines:
+                    draw.text((100, y_offset), line, font=content_font, fill="black")
+                    y_offset += 200  # Increased spacing between lines
+            elif element.name.startswith("h"):
+                size = 240 - int(element.name[1]) * 20  # Increased base size for headers
+                header_font = get_default_font(size)
+                header_lines = wrap_text(element.text, header_font, content_width)
+                for line in header_lines:
+                    draw.text((100, y_offset), line, font=header_font, fill="black")
+                    y_offset += size + 40
+            elif element.name in ["ul", "ol"]:
+                for li in element.find_all("li"):
+                    bullet_lines = wrap_text("• " + li.text, content_font, content_width - 100)
+                    for line in bullet_lines:
+                        draw.text((200, y_offset), line, font=content_font, fill="black")
+                        y_offset += 200  # Increased spacing for list items
 
-    return slide
+        # Add image if provided (adjusted to fit with larger text)
+        if image_url:
+            try:
+                response = requests.get(image_url)
+                img = Image.open(BytesIO(response.content))
+                img_width = width // 3
+                img_height = height // 3
+                img.thumbnail((img_width, img_height))
+                slide.paste(img, (width - img_width - 100, height - img_height - 100))
+
+                if image_subtitle:
+                    subtitle_lines = wrap_text(image_subtitle, subtitle_font, img_width)
+                    subtitle_y = height - 100 - (len(subtitle_lines) * 140)
+                    for line in subtitle_lines:
+                        draw.text((width - img_width - 100, subtitle_y), line, font=subtitle_font, fill="black")
+                        subtitle_y += 140
+            except Exception as e:
+                print(f"Error loading image: {e}")
+
+        print("Slide created successfully")
+        return slide
+    except Exception as e:
+        print(f"Error in create_slide: {str(e)}")
+        raise
 
 
 def wrap_text(text, font, max_width):
@@ -221,7 +238,6 @@ async def create_video(
         # Read and parse the slides JSON
         slides_content = await slides.read()
         slides_data = json.loads(slides_content)
-
         if len(slides_data) != len(voiceovers):
             raise HTTPException(
                 status_code=400,
@@ -229,7 +245,7 @@ async def create_video(
             )
 
         video_clips = []
-
+        print(f"Slides data: {slides_data}")
         for index, (slide, voiceover) in enumerate(zip(slides_data, voiceovers)):
             # Create slide image
             slide_image = create_slide(
@@ -238,9 +254,10 @@ async def create_video(
                 slide.get("image_url"),
                 slide.get("image_subtitle"),
             )
+            print(f"Slide: {slide['title']}")
             image_path = os.path.join(STATIC_FOLDER, f"slide_{index}.png")
             slide_image.save(image_path)
-
+            print(f"Saved slide image to {image_path}")
             # Save voiceover
             voiceover_path = os.path.join(STATIC_FOLDER, f"voiceover_{index}.mp3")
             with open(voiceover_path, "wb") as vo_file:
@@ -267,6 +284,7 @@ async def create_video(
         video_url = f"/static/{video_filename}"
         return {"video_url": video_url}
     except Exception as e:
+        print(f"Error creating video: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 

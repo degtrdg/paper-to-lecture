@@ -1,6 +1,112 @@
 import { createClient } from '@supabase/supabase-js';
+import { v4 as uuidv4 } from 'uuid';
 
-export async function processJob(user_id: string, pdfUrl: string) {
+// Add this new test function
+export async function testProcessJob(enableTest: boolean = false) {
+    if (!enableTest) {
+        console.log("Test is disabled. Set enableTest to true to run the test.");
+        return;
+    }
+
+    const testUserId = "test_user_" + uuidv4();
+    console.log("Starting test job processing for user:", testUserId);
+
+    try {
+        // Simulate slide creation
+        console.log("Creating test slides...");
+        const testSlides = [
+            {
+                title: "Introduction to Cancer Stemness",
+                markdownContent: "- Cancer progression involves stem-cell-like features\n- Stemness refers to self-renewal and differentiation",
+                speakerNotes: "Cancer stemness is a crucial concept in understanding tumor progression."
+            },
+            {
+                title: "Stemness Indices",
+                markdownContent: "- Developed novel stemness indices\n- Based on gene expression and DNA methylation",
+                speakerNotes: "These indices help quantify the degree of dedifferentiation in tumors."
+            }
+        ];
+
+        // Actually call the TTS API
+        console.log("Calling TTS API...");
+        let voiceovers = [];
+        for (let slide of testSlides) {
+            try {
+                const ttsResult = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/tts`, {
+                    method: 'POST',
+                    body: JSON.stringify({ text: slide.speakerNotes }),
+                });
+                console.log("TTS result status:", ttsResult.status);
+
+                if (!ttsResult.ok) {
+                    console.error(`TTS API returned status ${ttsResult.status} for slide`);
+                    voiceovers.push('');
+                    continue;
+                }
+
+                const audioBuffer = await ttsResult.arrayBuffer();
+                const base64Audio = Buffer.from(audioBuffer).toString('base64');
+                voiceovers.push(base64Audio);
+            } catch (error) {
+                console.error(`Error processing TTS:`, error);
+                voiceovers.push('');
+            }
+        }
+
+        // Prepare data for create_video endpoint
+        const formData = new FormData();
+
+        // Add slides JSON
+        const slidesBlob = new Blob([JSON.stringify(testSlides)], {
+            type: 'application/json'
+        });
+        formData.append('slides', slidesBlob, 'slides.json');
+
+        // Add voiceover files
+        voiceovers.forEach((voiceover, index) => {
+            if (voiceover) {
+                const audioBlob = new Blob([Buffer.from(voiceover, 'base64')], {
+                    type: 'audio/mpeg'
+                });
+                formData.append('voiceovers', audioBlob, `voiceover_${index}.mp3`);
+            }
+        });
+
+        // Actually call create_video endpoint
+        console.log("Calling create_video API...");
+        const createVideoResult = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/create_video`, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!createVideoResult.ok) {
+            throw new Error(`Failed to create video: ${createVideoResult.statusText}`);
+        }
+
+        const createVideoResponse = await createVideoResult.json();
+        console.log("Video created:", createVideoResponse);
+
+        console.log("Test job processing completed successfully");
+
+        return {
+            userId: testUserId,
+            slidesCount: testSlides.length,
+            voiceoversCount: voiceovers.length,
+            videoUrl: createVideoResponse.video_url
+        };
+
+    } catch (error) {
+        console.error("Error in test job processing:", error);
+        throw error;
+    }
+}
+
+// Modify your existing processJob function to include the test
+export async function processJob(user_id: string, pdfUrl: string, isTest: boolean = true) {
+    if (isTest) {
+        return await testProcessJob(true);
+    }
+
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
     console.log("Processing job:", user_id, pdfUrl);
     try {
@@ -34,7 +140,7 @@ export async function processJob(user_id: string, pdfUrl: string) {
         .update({ status: 3 })
         .eq('user_id', user_id);
         // The text extractor is not set up yet, so let's create some dummy data, about 5 paragraphs of text poorly formatted with words in wrong places
-        //const paperText = "This is a test paper, it has some words in wrong places and is not formatted well. It also has some references that should be removed. But everything that is related to the main content of the paper should be kept no matter what. Return a version of the text in a linear form that is readable inside a browser. It should be a single string with no line breaks. It should be about 5 paragraphs of text. It should be about 1000 words.";
+        //const paperText = "This is a test paper, it has some words in wrong pla   ces and is not formatted well. It also has some references that should be removed. But everything that is related to the main content of the paper should be kept no matter what. Return a version of the text in a linear form that is readable inside a browser. It should be a single string with no line breaks. It should be about 5 paragraphs of text. It should be about 1000 words.";
         // Then, call the truncate text api
         const truncateTextResult = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/paper/truncate-text`, {
             method: 'POST',
@@ -149,13 +255,31 @@ export async function processJob(user_id: string, pdfUrl: string) {
         }
 
         const createVideoResponse = await createVideoResult.json();
-
+        const video_id = uuidv4();
         // Add to a supabase table
+        const { data, error } = await supabase
+            .from('videos')
+            .insert({
+                uuid: video_id,
+                video_link: createVideoResponse.video_url,
+                creator_id: user_id
+            });
 
+        if (error) {
+            console.error('Error inserting video into database:', error);
+            throw new Error('Failed to save video information');
+        }
+        // Update job status with the video_id
         await supabase
-        .from('jobs')
-        .update({ status: 8 })
-        .eq('user_id', user_id);
+            .from('jobs')
+            .update({ 
+                status: 8,
+                video_id: video_id
+            })
+            .eq('user_id', user_id);
+
+        console.log(`Job completed successfully. Video ID: ${video_id}`);
+
 
     } catch (error) {
         console.error(`Error processing job ${user_id}:`, error);
@@ -173,4 +297,3 @@ async function downloadPdf(pdfUrl: string) {
     const arrayBuffer = await response.arrayBuffer();
     return Buffer.from(arrayBuffer);
 }
-
