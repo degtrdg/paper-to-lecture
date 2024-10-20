@@ -11,7 +11,10 @@ export async function processJob(user_id: string, pdfUrl: string) {
             body: JSON.stringify({ pdfUrl: pdfUrl }),
         });
         const infoTruncatorResponse = await infoTruncatorResult.json();
-        const pdfBytes = infoTruncatorResponse['pdf'];
+        const pdfBase64 = infoTruncatorResponse['pdf'];
+        console.log("Info truncator responded");
+        // For not, we'll just download the pdf and send it to the paper text extractor
+        //const pdfBytes = await downloadPdf(pdfUrl);
         await supabase
         .from('jobs')
         .update({ status: 2 }) 
@@ -19,20 +22,23 @@ export async function processJob(user_id: string, pdfUrl: string) {
         // Then, lets call the paper text extractor
         const paperTextExtractorResult = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/extract_pdf_text`, {
             method: 'POST',
-            body: JSON.stringify({ pdf_file: pdfBytes }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ pdf_base64: pdfBase64 }),
         });
         const paperTextExtractorResponse = await paperTextExtractorResult.json();
+        console.log("Paper text extractor response:", paperTextExtractorResponse);
         await supabase
         .from('jobs')
         .update({ status: 3 })
         .eq('user_id', user_id);
         // The text extractor is not set up yet, so let's create some dummy data, about 5 paragraphs of text poorly formatted with words in wrong places
         //const paperText = "This is a test paper, it has some words in wrong places and is not formatted well. It also has some references that should be removed. But everything that is related to the main content of the paper should be kept no matter what. Return a version of the text in a linear form that is readable inside a browser. It should be a single string with no line breaks. It should be about 5 paragraphs of text. It should be about 1000 words.";
-        console.log("Paper text extractor response:", paperTextExtractorResponse);
         // Then, call the truncate text api
         const truncateTextResult = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/paper/truncate-text`, {
             method: 'POST',
-            body: JSON.stringify({ rawPaper: paperTextExtractorResponse['full_text'] }),
+            body: JSON.stringify({ rawPaper: paperTextExtractorResponse['extracted_text'] }),
         });
         const truncateTextResponse = await truncateTextResult.json();
         console.log("Truncated paper:", truncateTextResponse);
@@ -67,13 +73,6 @@ export async function processJob(user_id: string, pdfUrl: string) {
         .from('jobs')
         .update({ status: 6 })
         .eq('user_id', user_id);
-        // Then, call the extract slides api 
-
-        // Then, call the export slides api
-
-        // Then, call the tts api
-
-        // Then, call the video parsing api (ffmpeg)
 
         // Then ITS SHOWTIME
         await supabase
@@ -91,3 +90,10 @@ export async function processJob(user_id: string, pdfUrl: string) {
             .eq('user_id', user_id);
     }
 }
+
+async function downloadPdf(pdfUrl: string) {
+    const response = await fetch(pdfUrl);
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer);
+}
+

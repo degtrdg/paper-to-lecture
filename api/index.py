@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,6 +11,7 @@ import base64
 import os
 import PyPDF2
 import uvicorn
+import io
 
 app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json")
 
@@ -50,14 +51,24 @@ async def create_slide_endpoint(slide_request: SlideRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+class PDFBase64Request(BaseModel):
+    pdf_base64: str
+
+
 @app.post("/api/extract_pdf_text")
-async def extract_pdf_text(pdf_file: UploadFile = File(...)):
+async def extract_pdf_text(request: PDFBase64Request):
     try:
-        # Read the uploaded PDF file
-        pdf_content = await pdf_file.read()
+        # Decode the base64 PDF
+        pdf_content = base64.b64decode(request.pdf_base64)
 
         # Create a PDF reader object
-        pdf_reader = PyPDF2.PdfReader(BytesIO(pdf_content))
+        pdf_file = io.BytesIO(pdf_content)
+
+        try:
+            pdf_reader = PyPDF2.PdfReader(pdf_file, strict=False)
+        except PyPDF2.errors.PdfReadError as e:
+            print(f"PyPDF2 error: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Invalid PDF file: {str(e)}")
 
         # Initialize an empty string to store all the text
         all_text = ""
@@ -70,13 +81,16 @@ async def extract_pdf_text(pdf_file: UploadFile = File(...)):
         response = {
             "total_pages": len(pdf_reader.pages),
             "total_characters": len(all_text),
-            "extracted_text": all_text,
+            "extracted_text": all_text[
+                :1000
+            ],  # Return first 1000 characters as a sample
             "full_text": all_text,
         }
 
         return response
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Unexpected error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error processing PDF: {str(e)}")
 
 
 def create_slide(

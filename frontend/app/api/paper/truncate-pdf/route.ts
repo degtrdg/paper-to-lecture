@@ -37,8 +37,11 @@ export async function POST(request: NextRequest) {
 
     // Save the new PDF without reference pages
     const pdfBytes = await newPdfDoc.save();
+    
+    // Convert to base64
+    const base64Pdf = Buffer.from(pdfBytes).toString('base64');
 
-    return NextResponse.json({ success: true, pdf: pdfBytes });
+    return NextResponse.json({ success: true, pdf: base64Pdf });
   } catch (error) {
     console.error('Error processing PDF:', error);
     return NextResponse.json({ success: false, error: 'Failed to process PDF' }, { status: 500 });
@@ -59,7 +62,7 @@ async function checkForReferences(pageBuffer: Uint8Array): Promise<boolean> {
     "Is this page a reference page? (one of the pages in the PDF that soley contains references) Answer with just 'yes' or 'no'.",
     { inlineData: { data: Buffer.from(pageBuffer).toString('base64'), mimeType: "application/pdf" } },
   ]);
-  console.log("Checking for references:", result);
   const response = await result.response;
+  console.log("Response:", response.text());
   return response.text().toLowerCase().trim().includes('yes');
 }
