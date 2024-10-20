@@ -1,7 +1,9 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File
-from pydantic import BaseModel
-from typing import Optional
+from fastapi import FastAPI, HTTPException, UploadFile, File, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from typing import Optional, List
 from PIL import Image, ImageDraw, ImageFont
 import markdown
 from io import BytesIO
@@ -11,6 +13,10 @@ import base64
 import os
 import PyPDF2
 import uvicorn
+from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
+import json
+import uuid
+import shutil
 
 app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json")
 
@@ -22,33 +28,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount static folder
+STATIC_FOLDER = "static"
+if not os.path.exists(STATIC_FOLDER):
+    os.makedirs(STATIC_FOLDER)
+
+app.mount("/static", StaticFiles(directory=STATIC_FOLDER), name="static")
 
 class SlideRequest(BaseModel):
     title: str
     content: str
     image_url: Optional[str] = None
     image_subtitle: Optional[str] = None
-
-
-@app.post("/api/create_slide")
-async def create_slide_endpoint(slide_request: SlideRequest):
-    try:
-        slide = create_slide(
-            slide_request.title,
-            slide_request.content,
-            slide_request.image_url,
-            slide_request.image_subtitle,
-        )
-
-        # Convert the slide to base64
-        buffered = BytesIO()
-        slide.save(buffered, format="PNG")
-        img_str = base64.b64encode(buffered.getvalue()).decode()
-
-        return {"slide_image": img_str}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 
 @app.post("/api/extract_pdf_text")
 async def extract_pdf_text(pdf_file: UploadFile = File(...)):
@@ -78,6 +69,24 @@ async def extract_pdf_text(pdf_file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/create_slide")
+async def create_slide_endpoint(slide_request: SlideRequest):
+    try:
+        slide = create_slide(
+            slide_request.title,
+            slide_request.content,
+            slide_request.image_url,
+            slide_request.image_subtitle,
+        )
+
+        # Convert the slide to base64
+        buffered = BytesIO()
+        slide.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+
+        return {"slide_image": img_str}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 def create_slide(
     title, content, image_url=None, image_subtitle=None, width=1920, height=1080
@@ -157,6 +166,107 @@ def wrap_text(text, font, max_width):
 
     lines.append(current_line)
     return lines
+
+
+@app.post("/api/create_video")
+async def create_video(
+    slides: UploadFile = File(...),
+    voiceovers: List[UploadFile] = File(...),
+):
+    """
+    Create a video from slides JSON and corresponding MP3 voiceover files.
+
+    Args:
+        slides (UploadFile): JSON file containing slide information.
+        voiceovers (List[UploadFile]): List of MP3 files for each slide.
+
+    Returns:
+        dict: Link to the generated video.
+    """
+    try:
+        # Read and parse the slides JSON
+        slides_content = await slides.read()
+        slides_data = json.loads(slides_content)
+
+        if len(slides_data) != len(voiceovers):
+            raise HTTPException(
+                status_code=400,
+                detail="Number of voiceover files must match number of slides.",
+            )
+
+        video_clips = []
+
+        for index, (slide, voiceover) in enumerate(zip(slides_data, voiceovers)):
+            # Create slide image
+            slide_image = create_slide(
+                slide["title"],
+                slide["markdownContent"],
+                slide.get("image_url"),
+                slide.get("image_subtitle"),
+            )
+            image_path = os.path.join(STATIC_FOLDER, f"slide_{index}.png")
+            slide_image.save(image_path)
+
+            # Save voiceover
+            voiceover_path = os.path.join(STATIC_FOLDER, f"voiceover_{index}.mp3")
+            with open(voiceover_path, "wb") as vo_file:
+                vo_file.write(await voiceover.read())
+
+            # Create video clip with image and audio
+            audio_clip = AudioFileClip(voiceover_path)
+            image_clip = ImageClip(image_path).set_duration(audio_clip.duration)
+            image_clip = image_clip.set_audio(audio_clip)
+
+            video_clips.append(image_clip)
+
+        # Concatenate all clips
+        final_clip = concatenate_videoclips(video_clips, method="compose")
+        video_filename = f"video_{uuid.uuid4().hex}.mp4"
+        video_path = os.path.join(STATIC_FOLDER, video_filename)
+        final_clip.write_videofile(video_path, fps=24)
+
+        # Clean up individual slide images and voiceovers
+        for index in range(len(slides_data)):
+            os.remove(os.path.join(STATIC_FOLDER, f"slide_{index}.png"))
+            os.remove(os.path.join(STATIC_FOLDER, f"voiceover_{index}.mp3"))
+
+        video_url = f"/static/{video_filename}"
+        return {"video_url": video_url}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/clear_static")
+async def clear_static():
+    """
+    Clear all files in the static folder.
+
+    Returns:
+        dict: Confirmation message.
+    """
+    try:
+        shutil.rmtree(STATIC_FOLDER)
+        os.makedirs(STATIC_FOLDER)
+        return {"detail": "Static folder cleared successfully."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/get_video/{filename}")
+async def get_video(filename: str):
+    """
+    Retrieve a video file from the static folder.
+
+    Args:
+        filename (str): Name of the video file.
+
+    Returns:
+        FileResponse: The requested video file.
+    """
+    file_path = os.path.join(STATIC_FOLDER, filename)
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Video not found.")
+    return FileResponse(file_path, media_type="video/mp4")
 
 
 if __name__ == "__main__":

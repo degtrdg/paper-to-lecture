@@ -1,0 +1,50 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Next.js: debug server-side",
+      "cwd": "${workspaceFolder}/frontend",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev"
+    },
+    {
+      "name": "Next.js: debug client-side",
+      "cwd": "${workspaceFolder}/frontend",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000"
+    },
+    {
+      "name": "Next.js: debug full stack",
+      "cwd": "${workspaceFolder}/frontend",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "serverReadyAction": {
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      }
+    },
+    {
+      "name": "FastAPI: debug",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["index:app", "--reload"],
+      "cwd": "${workspaceFolder}/api",
+      "jinja": true,
+      "justMyCode": true,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/venv/lib/bin/python"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Next.js + FastAPI: debug full stack",
+      "configurations": ["Next.js: debug full stack", "FastAPI: debug"]
+    }
+  ]
+}
