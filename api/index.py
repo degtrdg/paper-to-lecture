@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,6 +8,10 @@ from io import BytesIO
 import requests
 from bs4 import BeautifulSoup
 import base64
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
+from google.oauth2.credentials import Credentials
+import os
 
 app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json")
 
@@ -19,13 +23,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 class SlideRequest(BaseModel):
     title: str
     content: str
     image_url: Optional[str] = None
     image_subtitle: Optional[str] = None
 
+class VideoUploadRequest(BaseModel):
+    title: str
+    description: str
+    tags: Optional[list[str]] = None
+    privacy_status: str = "private"
 
 @app.post("/api/create_slide")
 async def create_slide_endpoint(slide_request: SlideRequest):
@@ -46,10 +54,53 @@ async def create_slide_endpoint(slide_request: SlideRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/upload_video")
+async def upload_video_endpoint(video: UploadFile = File(...), request: VideoUploadRequest = None):
+    try:
+        # Save the uploaded file temporarily
+        temp_file_path = f"temp_{video.filename}"
+        with open(temp_file_path, "wb") as buffer:
+            buffer.write(await video.read())
 
-def create_slide(
-    title, content, image_url=None, image_subtitle=None, width=1920, height=1080
-):
+        # Upload to YouTube
+        video_id = upload_to_youtube(temp_file_path, request.title, request.description, request.tags, request.privacy_status)
+
+        # Clean up the temporary file
+        os.remove(temp_file_path)
+
+        return {"video_id": video_id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def upload_to_youtube(file_path, title, description, tags, privacy_status):
+    # Set up credentials (You need to handle OAuth 2.0 flow separately)
+    credentials = Credentials.from_authorized_user_file('path/to/your/credentials.json')
+
+    youtube = build('youtube', 'v3', credentials=credentials)
+
+    request_body = {
+        'snippet': {
+            'title': title,
+            'description': description,
+            'tags': tags,
+            'categoryId': '22'  # You might want to adjust this category ID
+        },
+        'status': {
+            'privacyStatus': privacy_status
+        }
+    }
+
+    media_file = MediaFileUpload(file_path)
+
+    response = youtube.videos().insert(
+        part='snippet,status',
+        body=request_body,
+        media_body=media_file
+    ).execute()
+
+    return response['id']
+
+def create_slide(title, content, image_url=None, image_subtitle=None, width=1920, height=1080):
     # Create a blank white image
     slide = Image.new("RGB", (width, height), color="white")
     draw = ImageDraw.Draw(slide)
